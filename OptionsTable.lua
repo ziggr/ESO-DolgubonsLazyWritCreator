@@ -75,16 +75,31 @@ function WritCreater.Options() --Sentimental
 				getFunc = function() return WritCreater.savedVarsAccountWide.masterWrits end,
 				setFunc = function(value) 
 				WritCreater.savedVarsAccountWide.masterWrits = value
+				WritCreater.savedVarsAccountWide.rightClick = not value
+				WritCreater.LLCInteraction:cancelItem()
 					if value  then
 						
 						for i = 1, 25 do WritCreater.MasterWritsQuestAdded(1, i,GetJournalQuestName(i)) end
-					else
-						WritCreater.LLCInteraction:cancelItem()
 					end
 					
 					
 				end,
-				},
+			},
+			{
+				type = "checkbox",
+				name = WritCreater.optionStrings["right click to craft"],--"Master Writs",
+				tooltip = WritCreater.optionStrings["right click to craft tooltip"],--"Craft Master Writ Items",
+				getFunc = function() return WritCreater.savedVarsAccountWide.rightClick end,
+				setFunc = function(value) 
+				WritCreater.savedVarsAccountWide.masterWrits = not value
+				WritCreater.savedVarsAccountWide.rightClick = value
+				WritCreater.LLCInteraction:cancelItem()
+					if not value  then
+						
+						for i = 1, 25 do WritCreater.MasterWritsQuestAdded(1, i,GetJournalQuestName(i)) end
+					end
+				end,
+			},
 			
 	}
 ----------------------------------------------------

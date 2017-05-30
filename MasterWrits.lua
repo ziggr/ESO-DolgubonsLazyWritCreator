@@ -508,10 +508,9 @@ function WritCreater.InventorySlot_ShowContextMenu(rowControl,debugslot)
 	if not station then return end
     -- Check if you can find "Blacksmithing, Clothing Woodworking or Enchanting"
     -- Search for if it is armour or not
-
+    if not WritCreater.savedVarsAccountWide.rightClick then return end
     zo_callLater(function ()
         AddCustomMenuItem("Craft Sealed Writ", function ()
-            CHAT_SYSTEM:AddMessage("Make sure this hasn't been crafted yet!")
             if station == CRAFTING_TYPE_ENCHANTING then
             	EnchantingMasterWrit(nil, writText,  GetItemUniqueId(bag, slot))
             else
