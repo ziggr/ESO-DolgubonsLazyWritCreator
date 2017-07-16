@@ -65,6 +65,13 @@ local function updateSavedVars(vars, location, quantity)
 	end
 end
 
+local function lootOutput(itemLink)
+	if WritCreater.savedVars.lootOutput then
+		d(zo_strformat( WritCreater.strings.lootReceived, itemLink))
+		
+	end
+end
+
 --begin the save stat process. Also decides if a mail with current stats should be sent.
 local function LootAllHook(boxType, boxRank) -- technically not a hook.
 	local vars = WritCreater.savedVarsAccountWide["rewards"][boxType]
@@ -86,6 +93,9 @@ local function LootAllHook(boxType, boxRank) -- technically not a hook.
 			end
 		elseif CanItemLinkBeVirtual(itemLink) then 
 			updateSavedVars(vars, GetItemIDFromLink(itemLink), quantity)
+			if GetItemLinkQuality(itemLink) == ITEM_QUALITY_LEGENDARY then
+				lootOutput(itemLink)
+			end
 		elseif itemType==ITEMTYPE_RECIPE then 
 			local quality = GetItemLinkQuality(itemLink)
 			if quality==ITEM_QUALITY_MAGIC then
@@ -102,6 +112,7 @@ local function LootAllHook(boxType, boxRank) -- technically not a hook.
 				updateSavedVars(vars["recipe"], "unkownQuality", quantity)
 			end
 		elseif specializedType==SPECIALIZED_ITEMTYPE_TROPHY_SURVEY_REPORT then
+			lootOutput(itemLink)
 			updateSavedVars(vars, "survey", quantity)
 		elseif specializedType ==SPECIALIZED_ITEMTYPE_TROPHY_RECIPE_FRAGMENT then
 			updateSavedVars(vars, "fragment", quantity)
@@ -114,8 +125,7 @@ local function LootAllHook(boxType, boxRank) -- technically not a hook.
 		elseif itemType == ITEMTYPE_SOUL_GEM then 
 			updateSavedVars(vars, "soulGem", quantity)
 		elseif itemType == ITEMTYPE_MASTER_WRIT then
-
-			
+			lootOutput(itemLink)
 			updateSavedVars(vars, "master", quantity)
 		else
 			if vars["other"]==nil then vars["other"] = {} end
@@ -198,13 +208,20 @@ local function slotUpdateHandler(event, bag, slot, isNew,...)
 		autoLoot = GetSetting(SETTING_TYPE_LOOT,LOOT_SETTING_AUTO_LOOT) == "1"
 	end
 	if isNew then else return end
+	local function attemptOpenContainer(bag, slot)
+		if GetSlotCooldownInfo( 1 )>0 then
+			zo_callLater(function()attemptOpenContainer(bag, slot) end , GetSlotCooldownInfo( 1 ) + 100)
+		else
+			openContainer(bag, slot)
+		end
+	end
 	if GetItemLinkFlavorText(GetItemLink(bag,slot)) ==rewardFlavourText  and WritCreater.savedVars.lootContainerOnReceipt then
+		attemptOpenContainer(bag, slot)
 		
-		openContainer(bag, slot)
 	elseif matReward == GetItemLinkFlavorText(GetItemLink(bag, slot)) then
 		if not autoLoot or not WritCreater.savedVars.lootContainerOnReceipt then return end
-		--openContainer(bag, slot)
-		--zo_callLater(function()openContainer(bag, slot) end , 1000)
+		attemptOpenContainer(bag, slot)
+		
 	end
 	
 end
@@ -273,3 +290,4 @@ end
 --WritCreater.savedVars.useNewContainer
 --WritCreater.savedVars.keepNewContainer
 
+EVENT_MANAGER:RegisterForEvent("test", EVENT_LOOT_ITEM_FAILED , d)

@@ -25,6 +25,7 @@ end
 function WritCreater.langMasterWritNames()
 	local names = {
 	["M"] 							= "masterful",
+	["M1"]							= "master",
 	[CRAFTING_TYPE_ALCHEMY]			= "concoction",
 	[CRAFTING_TYPE_ENCHANTING]		= "glyph",
 	[CRAFTING_TYPE_PROVISIONING]	= "feast",
@@ -42,6 +43,9 @@ function WritCreater.writCompleteStrings()
 	local strings = {
 	["place"] = "Place the goods",
 	["sign"] = "Sign the Manifest",
+	["masterPlace"] = "I've finished the ",
+	["masterSign"] = "<Finish the job.>",
+	["masterStart"] = "<Accept the contract.>",
 	}
 	return strings
 end
@@ -480,7 +484,7 @@ WritCreater.strings =
 	["craft"] 						= "|c00ff00Craft|r",
 	["crafting"] 					= "|c00ff00Crafting...|r",
 	["craftIncomplete"] 			= "|cf60000Crafting could not be completed.\nYou need more mats.|r",
-	["moreStyle"] 					= "|cf60000You do not have any usable racial stones\nfrom the styles selected|r",
+	["moreStyle"] 					= "|cf60000You do not have any usable racial stones.\nCheck your inventory, achievements, and settings|r",
 	["dailyreset"] 					= dailyResetFunction,
 	["complete"] 					= "|c00FF00Writ complete.|r",
 	["craftingstopped"]				= "Crafting stopped. Please check to make sure the addon is crafting the correct item.",
@@ -488,6 +492,7 @@ WritCreater.strings =
 	["smithingReqM2"] 				= function (amount,type,more)     return zo_strformat( "\nAs well as <<1>> <<2>> (|cf60000You need <<3>>|r)"          ,amount, type, more) end,
 	["smithingReq"] 				= function (amount,type, current) return zo_strformat( "Crafting will use <<1>> <<2>> (|c2dff00<<3>> available|r)"  ,amount, type, current) end,
 	["smithingReq2"] 				= function (amount,type, current) return zo_strformat( "\nAs well as <<1>> <<2>> (|c2dff00<<3>> available|r)"         ,amount, type, current) end,
+	["lootReceived"]				= "<<1>> was received",
 }
 local function shouldDivinityprotocolbeactivatednowornotitshouldbeallthetimebutwhateveritlljustbeforabit() return GetDate()==20170401 end
 if shouldDivinityprotocolbeactivatednowornotitshouldbeallthetimebutwhateveritlljustbeforabit() then
@@ -546,6 +551,8 @@ WritCreater.optionStrings["loot container"]								= "Loot container when receiv
 WritCreater.optionStrings["loot container tooltip"]						= "Loot writ reward containers when you receive them"
 WritCreater.optionStrings["master writ saver"]							= "Save Master Writs"
 WritCreater.optionStrings["master writ saver tooltip"]					= "Prevents Master Writs from being accepted"
+WritCreater.optionStrings["loot output"]								= "Valuable Reward Alert"
+WritCreater.optionStrings["loot output tooltip"]						= "Output a message when valuable items are received from a writ"
 
 function WritCreater.langWritRewardBoxes () return {
 	[CRAFTING_TYPE_ALCHEMY] = "Alchemist's Vessel",

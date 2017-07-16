@@ -474,6 +474,8 @@ WritCreater.optionStrings["loot container"]						  = "Loot container when receiv
 WritCreater.optionStrings["loot container tooltip"]				  = "Loot writ reward containers when you receive them"
 WritCreater.optionStrings["master writ saver"]							= "Save Master Writs"
 WritCreater.optionStrings["master writ saver tooltip"]					= "Prevents Master Writs from being accepted"
+WritCreater.optionStrings["loot output"]								= "Valuable Reward Alert"
+WritCreater.optionStrings["loot output tooltip"]						= "Output a message when valuable items are received from a writ"
 
 function WritCreater.langWritRewardBoxes () 
 local WritRewardNames = { -- these are the containers you receive as writ rewards

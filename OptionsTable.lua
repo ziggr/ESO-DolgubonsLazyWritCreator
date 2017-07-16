@@ -163,6 +163,16 @@ function WritCreater.Options() --Sentimental
 			WritCreater.savedVars.preventMasterWritAccept = value					
 			end,
 		},
+		{
+			type = "checkbox",
+			name = WritCreater.optionStrings["loot output"],--"Master Writs",
+			tooltip = WritCreater.optionStrings["loot output tooltip"],--"Craft Master Writ Items",
+			getFunc = function() return WritCreater.savedVars.lootOutput end,
+			setFunc = function(value) 
+			WritCreater.savedVars.lootOutput = value					
+			end,
+		},
+		
 	}
 	
 ----------------------------------------------------

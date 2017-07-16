@@ -17,6 +17,9 @@ function WritCreater.writCompleteStrings()
 	local strings = {
 	["place"] = "Placer les produits dans la caisse",
 	["sing"] = "Signer le manifeste",
+	["masterStart"] = "<Accepter le contrat>",
+	["masterSign"] = "<Finir le travail.>",
+	["masterPlace"] = "J'ai accompli la t",
 	}
 	return strings
 end
@@ -24,6 +27,7 @@ end
 function WritCreater.langMasterWritNames()
 	local names = {
 	["M"] 							= "magistral",
+	["M1"] 							= "magistral",
 	[CRAFTING_TYPE_ALCHEMY]			= "concoction",
 	[CRAFTING_TYPE_ENCHANTING]		= "glyphe",
 	[CRAFTING_TYPE_PROVISIONING]	= "festin",
@@ -465,6 +469,7 @@ WritCreater.strings  = {
 	["smithingReq"] 					= function (amount,type, current) return zo_strformat( "La fabrication utilisera <<1>> <<2>> (|c2dff00<<3>> disponible|r)"  ,amount, type, current) end,
 	["smithingReq2"] 					= function (amount,type, current) return zo_strformat( "\nMais aussi <<1>> <<2>> (|c2dff00<<3>> disponible|r)" ,amount, type, current) end,
 	["dailyreset"] 						= function (till) d(zo_strformat("<<1>> heures et <<2>> minutes avant le reset journalier.",till["hour"],till["minute"])) end,
+	["lootReceived"]				= "<<1>> was received",
 }
 
 
@@ -503,14 +508,18 @@ WritCreater.optionStrings["master"]									  = "Master Writs"
 WritCreater.optionStrings["master tooltip"]							  = "Turn the addon off for Master Writs"
 WritCreater.optionStrings["right click to craft"]						= "Right Click to Craft"
 WritCreater.optionStrings["right click to craft tooltip"]				= "If this is ON the addon will craft Master Writs you tell it to craft after right clicking a sealed writ"
-WritCreater.optionStrings["crafting submenu"]						  = "Trades to Craft"
-WritCreater.optionStrings["crafting submenu tooltip"]				  = "Turn the addon off for specific crafts"
-WritCreater.optionStrings["timesavers submenu"]						  = "Timesavers"
-WritCreater.optionStrings["timesavers submenu tooltip"]				  = "Various small timesavers"
-WritCreater.optionStrings["loot container"]						  = "Loot container when received"
-WritCreater.optionStrings["loot container tooltip"]				  = "Loot writ reward containers when you receive them"
+WritCreater.optionStrings["crafting submenu"]							= "Trades to Craft"
+WritCreater.optionStrings["crafting submenu tooltip"]					= "Turn the addon off for specific crafts"
+WritCreater.optionStrings["timesavers submenu"]							= "Timesavers"
+WritCreater.optionStrings["timesavers submenu tooltip"]					= "Various small timesavers"
+WritCreater.optionStrings["loot container"]						  		= "Loot container when received"
+WritCreater.optionStrings["loot container tooltip"]				  		= "Loot writ reward containers when you receive them"
 WritCreater.optionStrings["master writ saver"]							= "Save Master Writs"
 WritCreater.optionStrings["master writ saver tooltip"]					= "Prevents Master Writs from being accepted"
+WritCreater.optionStrings["loot output"]								= "Alerte sur les récompenses précieuses"
+WritCreater.optionStrings["loot output tooltip"]						= "Afficher un message lorsque des objets de grande valeur sont reçus d'une commande d'artisanat"
+
+
 
 function WritCreater.langWritRewardBoxes () return {
 	[1] = "Récipient d'alchimiste",

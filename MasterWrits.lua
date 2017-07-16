@@ -199,7 +199,10 @@ local function EnchantingMasterWrit(journalIndex, sealedText, reference)
 	if foundAllEnchantingRequirements(essence, potency, aspect) then
 		local lvl = potency[1]
 		if potency[1]=="truly" then lvl = "truly superb" end
-		d(zo_strformat("Crafting a <<t:1>> Glyph of <<t:2>> at <<t:3>> quality", lvl, essence[1], aspect[1]))
+		d(zo_strformat("<<t:4>> <<t:5>> <<t:6>>: Crafting a <<t:1>> Glyph of <<t:2>> at <<t:3>> quality", lvl, essence[1], aspect[1],
+			WritCreater.langWritNames()[CRAFTING_TYPE_ENCHANTING],
+			WritCreater.langMasterWritNames()["M1"],
+			WritCreater.langWritNames()["G"]))
 		dbug("CALL:LLCENchantCraft")
 		WritCreater.LLCInteraction:CraftEnchantingItemId(potency[2][essence[3]], essence[2], aspect[2], true, reference)
 	else
@@ -327,15 +330,24 @@ local function SmithingMasterWrit(journalIndex, info, station, isArmour, materia
 
 	if foundAllRequirements(pattern, style, setIndex, trait, quality) then
 
-		d(zo_strformat("Crafting a CP150 <<t:6>> <<t:1>> from <<t:2>> with trait <<t:3>> and style <<t:4>> at <<t:5>> quality"
+		local partialString = zo_strformat("Crafting a CP150 <<t:6>> <<t:1>> from <<t:2>> with trait <<t:3>> and style <<t:4>> at <<t:5>> quality"
 			,pattern[1], 
 			GetSetIndexes()[setIndex][1],
 			trait[1],
 			style[1], 
 			quality[1],
-			material ))
+			material			
+			 )
+		d(zo_strformat("<<t:2>> <<t:3>> <<t:4>>: <<1>>",
+			partialString,
+			WritCreater.langWritNames()[station],
+			WritCreater.langMasterWritNames()["M1"],
+			WritCreater.langWritNames()["G"]
+			))
+
 		dbug("CALL:LLCCraftSmithing")
 		WritCreater.LLCInteraction:cancelItemByReference(reference)
+
 		WritCreater.LLCInteraction:CraftSmithingItemByLevel( pattern[2], true , 150, style[2], trait[2], false, station, setIndex, quality[2], true, reference)
 	else
 		dbug("ERROR:RequirementMissing")
@@ -385,6 +397,7 @@ function WritCreater.MasterWritsQuestAdded(event, journalIndex,name)
 		if strFind(name, v) then
 			if k == "M" then
 				isMasterWrit = true
+			elseif k == "M1" then
 			else
 				writType = k
 			end
@@ -473,7 +486,7 @@ SLASH_COMMANDS['/rerunmasterwrits'] = WritCreater.scanAllQuests
 SLASH_COMMANDS['/craftitems'] = function() WritCreater.LLCInteraction:CraftAllItems() end
 --
 function WritCreater.InventorySlot_ShowContextMenu(rowControl,debugslot)
-
+	
 	local bag, slot, link, flavour, reference
 	if type(rowControl)=="userdata" or type(rowControl)=="number" then 
 		if type(rowControl)=="userdata" then

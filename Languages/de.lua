@@ -15,6 +15,9 @@ function WritCreater.writCompleteStrings()
 	local strings = {
 	["place"] = "Die Waren in die Kiste legen",
 	["sing"] = "Das Manifest unterschreiben",
+	["masterStart"] = "<Nehmt den Auftrag an.>",
+	["masterSign"] = "<Auftrag abschließen.>",
+	["masterPlace"] = "Ich habe den ",
 	}
 	return strings
 end
@@ -22,6 +25,7 @@ end
 function WritCreater.langMasterWritNames()
 	local names = {
 	["M"] 							= "meisterhafte",
+	["M1"]							= "meister",
 	[CRAFTING_TYPE_ALCHEMY]			= "gebräu",
 	[CRAFTING_TYPE_ENCHANTING]		= "glyphe",
 	[CRAFTING_TYPE_PROVISIONING]	= "mahl",
@@ -468,6 +472,7 @@ WritCreater.strings = {
 	["dailyreset"] 								= function (till) d(till["hour"].." Stunden und "..till["minute"].." Minuten bis zum Daily Reset") end,
 	["complete"] 								= "|c00FF00Der Schrieb ist fertig|r",
 	["craftingstopped"] 						= "Herstellung gestoppt. Bitte überprüfe, ob das AddOn den richtigen Gegenstand herstellt.",
+	["lootReceived"]							= "<<1>> erhalten",
 }
 
 WritCreater.optionStrings = {}
@@ -512,7 +517,9 @@ WritCreater.optionStrings["loot container"]								= "Plündern von Belohnungs-B
 WritCreater.optionStrings["loot container tooltip"]						= "Automatisches Plündern der Handwerksschrieb-Belohnungs-Behälter bei Erhalt"
 WritCreater.optionStrings["master writ saver"]							= "Meisterschriebe sperren"
 WritCreater.optionStrings["master writ saver tooltip"]					= "Sperrt die Möglichkeit Meisterschriebe anzunehmen"
-
+WritCreater.optionStrings["loot output"]								= "Wertvolle Belohnung Hinweis"
+WritCreater.optionStrings["loot output tooltip"]						= "Gebe eine Nachricht aus sobald du wertvolle Gegenstände aus einem Schrieb erhälst"
+--"<<1>> erhalten"
 function WritCreater.langWritRewardBoxes () return {
 	[1] = "Alchemistengefäß",
 	[2] = "Verzaubererkassette",

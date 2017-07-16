@@ -291,10 +291,7 @@ function LibCustomTitles:Init()
 				fr = "L'immortel",
 				de = "Undying",
 			},
-			ov = true,
-			en = "Crafting Overlord",
-			de = "Der Handwerk König",
-			fr = "Le Suprême Artisan",
+
 		},
 		
 		["@Sethize"] = { -- EU v12

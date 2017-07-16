@@ -50,6 +50,7 @@ WritCreater.default =
 	["autoAccept"] = true, 
 	["keepNewContainer"] = true,
 	["lootContainerOnReceipt"] = true,	
+	["lootOutput"] = true,
 }
 WritCreater.defaultAccountWide = {
 	["masterWrits"] = true,
@@ -1010,7 +1011,7 @@ function WritCreater:Initialize()
 	end
 	LibLazyCrafting = LibStub:GetLibrary("LibLazyCrafting")
 	WritCreater.LLCInteraction = LibLazyCrafting:AddRequestingAddon(WritCreater.name, true, function(...) end)	
-	
+
 	EVENT_MANAGER:RegisterForEvent(WritCreater.name, EVENT_PLAYER_ACTIVATED,function(event, initial) if  newlyLoaded then  newlyLoaded = false  WritCreater.scanAllQuests() EVENT_MANAGER:UnregisterForEvent(WritCreater.name, EVENT_PLAYER_ACTIVATED) end end )
 	WritCreater.LootHandlerInitialize()
 	WritCreater.InitializeQuestHandling()
@@ -1020,7 +1021,7 @@ function WritCreater:Initialize()
 	--if GetDisplayName() == "@Dolgubon" then EVENT_MANAGER:RegisterForEvent(WritCreater.name, EVENT_MAIL_READABLE, function(event, code) local displayName,_,subject =  GetMailItemInfo(code) WritCreater.savedVarsAccountWide["mails"]  d(displayName) d(subject) d(ReadMail(code)) end) end
 	local original = AcceptOfferedQuest
 	AcceptOfferedQuest = function()
-	if string.find(GetOfferedQuestInfo(), "Rolis Hlaalu") and WritCreater.savedVars.preventMasterWritAccept then  else original() end end
+	if string.find(GetOfferedQuestInfo(), "Rolis Hlaalu") and WritCreater.savedVars.preventMasterWritAccept then d("Dolgubon's Lazy Writ Crafter has saved you from accidentally accepting a master writ! Go to the settings menu to disable this option.")  else original() end end
 
 	--if GetDisplayName() =="@Dolgubon" then WritCreater.InitializeRightClick() end
 	WritCreater.InitializeRightClick()
@@ -1089,8 +1090,10 @@ EVENT_MANAGER:RegisterForEvent(WritCreater.name, EVENT_ADD_ON_LOADED, WritCreate
 --			Auto refine if you run out
 --			Autoloot the supply box rewards
 --			Auto turn in master writs
---			Automatically take hireling mails
 --			Button to decline writs that cannot be completed
+--			@Dolgubon: #1: Could the text strings I get in chat when accepting a writ be rearranged, as in <Crafting Station> (<Craftname>): Craft a...?
+--			@Dolgubon: #2: Could the AddOn automatically hand in Master Writs with Rollis if the option is there? I'm totally not asking for this because I know have an attunable blacksmithing station I never wanted, just out of curiosity. *coughs*
+--			Tell you if no item was found for writs
 
 --possible to-do:
 --		'craft multiple option'
