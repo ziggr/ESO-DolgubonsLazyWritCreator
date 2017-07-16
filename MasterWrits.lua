@@ -529,7 +529,7 @@ function WritCreater.InventorySlot_ShowContextMenu(rowControl,debugslot)
 					if flavour == GetItemLinkFlavorText(exampleSealedWrits[CRAFTING_TYPE_WOODWORKING]) then
 						isArmour = true
 					end
-					table.insert(info,{"healing",4}) 
+					table.insert(info,{"healing",6}) 
 					table.insert(info,{"frost",4}) 
 
 					material = "Ruby Ash"

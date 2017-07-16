@@ -33,7 +33,7 @@ local function styleCompiler()
 			tooltip = optionStrings["style tooltip"](v[2]),
 			getFunc = function() return WritCreater.savedVars.styles[v[1]] end,
 			setFunc = function(value)
-				WritCreater.savedVars.styles[v[1]] = value or nil
+				WritCreater.savedVars.styles[v[1]] = value
 				end,
 		}
 		submenuTable[#submenuTable + 1] = option
