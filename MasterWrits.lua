@@ -330,7 +330,7 @@ local function SmithingMasterWrit(journalIndex, info, station, isArmour, materia
 
 	if foundAllRequirements(pattern, style, setIndex, trait, quality) then
 
-		local partialString = zo_strformat("Crafting a CP150 <<t:6>> <<t:1>> from <<t:2>> with trait <<t:3>> and style <<t:4>> at <<t:5>> quality"
+		local partialString = zo_strformat("Crafting a CP150 <<t:6>> <<t:1>> from <<t:2>> with the <<t:3>> trait and style <<t:4>> at <<t:5>> quality"
 			,pattern[1], 
 			GetSetIndexes()[setIndex][1],
 			trait[1],

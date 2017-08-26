@@ -289,5 +289,3 @@ end
 
 --WritCreater.savedVars.useNewContainer
 --WritCreater.savedVars.keepNewContainer
-
-EVENT_MANAGER:RegisterForEvent("test", EVENT_LOOT_ITEM_FAILED , d)
