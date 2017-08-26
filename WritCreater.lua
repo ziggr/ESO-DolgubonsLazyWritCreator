@@ -1,4 +1,4 @@
---Declarations
+﻿--Declarations
 --GetSkillAbilityInfo(number SkillType skillType, number skillIndex, number abilityIndex)
 --GetSkillLineInfo(number SkillType skillType, number skillIndex)
 
@@ -865,13 +865,13 @@ local tutorial1 = function () end
 local function temporarycraftcheckerjustbecause(eventcode, station)
 	
 	local currentAPIVersionOfAddon = 100018
-	if GetTimeStamp()>1494543600 then
+	if GetTimeStamp()>1503360000 then
 		currentAPIVersionOfAddon = currentAPIVersionOfAddon + 1
 	end
-	if GetAPIVersion() > currentAPIVersionOfAddon and GetWorldName()~="PTS" then 
-		for i= 1, 10 do 
-			d("Update your addons!") 
-		end 
+	if GetTimeStamp()>1503360000 and GetWorldName()~="PTS" then 
+
+		d("Update your addons!") 
+
 	end
 
 	if GetAPIVersion() > currentAPIVersionOfAddon+1 and GetDisplayName()=="@Dolgubon" and GetWorldName()=="PTS"  then 
