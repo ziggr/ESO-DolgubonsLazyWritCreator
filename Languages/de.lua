@@ -346,6 +346,31 @@ local function temporaryCheck(condition,info)
 	return true
 end
 
+local bankExceptions = 
+{
+	["original"] = {
+		"essenzen",
+		"arenthischen",
+		"gelnden",
+	},
+	["corrected"] = {
+		"essenz",
+		"arenthischer",
+		"gelnder",
+	}
+}
+
+function WritCreater.bankExceptions(condition)
+	
+	if string.find(condition, "beliefert") then
+		return ""
+	end
+	condition = string.gsub(condition, ":", " ")
+	for i = 1, #bankExceptions["original"] do
+		condition = string.gsub(condition,bankExceptions["original"][i],bankExceptions["corrected"][i])
+	end
+	return condition
+end
 
 function WritCreater.exceptions(condition)
 	local location = GetCraftingInteractionType()

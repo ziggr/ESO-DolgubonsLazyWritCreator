@@ -360,6 +360,28 @@ local enExceptions = {
 }
 
 
+local bankExceptions = 
+{
+	["original"] = {
+		"dégâts",
+		
+	},
+	["corrected"] = {
+		"ravage",
+		
+	}
+}
+
+function WritCreater.bankExceptions(condition)
+	if string.find(condition, "livrez") then
+		return ""
+	end
+	condition = string.gsub(condition, ":", " ")
+	for i = 1, #bankExceptions["original"] do
+		condition = string.gsub(condition,bankExceptions["original"][i],bankExceptions["corrected"][i])
+	end
+	return condition
+end
 
 function WritCreater.exceptions(condition)
 	condition = string.lower(condition)

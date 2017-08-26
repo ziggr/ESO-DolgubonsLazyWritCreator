@@ -18,7 +18,6 @@ end
 local timesToRun = 0
 
 local queue = {}
-local dqueue = {}
 
 local queuePosition = 1
 
@@ -26,14 +25,10 @@ local queuePosition = 1
 
 DolgubonTest = false
 
-local function isItemWrit(condition, check2, bonusCondition, bag, location)
-
-	return bonusCondition(location, bag) and ((not check2 and string.lower(string.gsub(GetItemName(bag, location),"-"," "))==condition) or (check2 and string.lower(string.gsub(GetItemName(bag, location),"-"," "))==condition))
-end
-
-emptySlots = {}
+local emptySlots = {}
 
 local function findEmptySlots(location)
+	emptySlots = {}
 	for i = FindFirstEmptySlotInBag(location) or 250, GetBagSize(location) do
 		if GetItemName(location, i) == "" then
 			emptySlots[#emptySlots + 1] = i
@@ -42,53 +37,103 @@ local function findEmptySlots(location)
 	return nil
 end
 
-local function checkOneSlot(condition, amount, check2, bonusCondition, max, bag, slot)
-	if isItemWrit(condition,  check2, bonusCondition, bag, slot)  then			
-		
-		local emptySlot = emptySlots[1]
-		
-		if emptySlot then
-			table.remove(emptySlots,1)
-			if IsProtectedFunction("RequestMoveItem") then
-				CallSecureProtected("RequestMoveItem", bag, slot, BAG_BACKPACK,emptySlot,amount)
-			else
-				
-				RequestMoveItem(bag, i, BAG_BACKPACK,emptySlot,amount)
-			end
-			d("Dolgubon's Lazy Writ Crafter retrieved "..tostring(amount).." "..GetItemLink(bag, slot,0))
-			return true
-		else
-			d("You have no open bag spaces. Please empty your bag.")
-		end
 
+local function myLower(str)
+	return zo_strformat("<<z:1>>",str)-- "Rüstung der Verführung^f"
+end
+
+local function standardizeString(str)
+	str = myLower(str)
+	str = string.gsub(str,"-"," ")
+	str = string.gsub(str,"ä","a")
+	str = string.gsub(str,"ü","u")
+	str = string.gsub(str,"ö","o")
+	return str
+end
+
+local function strFind(str, str2find, a, b, c)
+	str = standardizeString(str)
+	str2find = standardizeString(str2find)
+	return string.find(str, str2find, a, b, c)
+end
+
+local function moveItem( amountRequired, bag, slot)
+	local emptySlot = emptySlots[1]
+	
+	if emptySlot then
+		table.remove(emptySlots,1)
+		if IsProtectedFunction("RequestMoveItem") then
+			CallSecureProtected("RequestMoveItem", bag, slot, BAG_BACKPACK,emptySlot,amountRequired)
+		else
+			RequestMoveItem(bag, slot, BAG_BACKPACK,emptySlot,amount)
+		end
+		d("Dolgubon's Lazy Writ Crafter retrieved "..tostring(amountRequired).." "..GetItemLink(bag, slot,0))
+	else
+		d("You have no open bag spaces. Please empty your bag.")
+	end
+
+end
+
+local function isPotentialMatch(questCondition, validItemTypes, bag, slot)
+	local itemType = GetItemType(bag, slot)
+	if validItemTypes[itemType] then
+		local name = GetItemName(bag, slot)
+		if name == "" then return false end
+		local link = GetItemLink(bag, slot)
+		if IsItemLinkConsumable(link) and not IsItemLinkCrafted(link) then return false end
+		if strFind(questCondition, " "..name.." ") then
+			return true
+		end
 	end
 	return false
 end
 
-local function potionGrab(condition,amount,check2,bonusCondition,max)
-
-			--[[
-		if DolgubonTest then
-			local s = 1
-			d("moved "..GetItemName(BAG_BANK, s))
-			local emptySlot = FindFirstEmptySlotInBag(BAG_BACKPACK)
-			if IsProtectedFunction("RequestMoveItem") then
-				CallSecureProtected("RequestMoveItem", BAG_BANK, s, BAG_BACKPACK,emptySlot,1)
-			else
-				RequestMoveItem(BAG_BANK, s, BAG_BACKPACK,emptySlot,1)
+local function filterMatches(matches)
+	if #matches== 0 then
+		return nil, nil
+	elseif #matches==1 then
+		return matches[1][1], matches[1][2]
+	else
+		local longest = 0
+		local position = 0
+		for i = 1, #matches do
+			if string.len(GetItemName(matches[i][1], matches[i][2]))>longest then
+				longest = string.len(GetItemName(matches[i][1], matches[i][2]))
+				position = i
 			end
-			
-			DolgubonTest = false   BAG_SUBSCRIBER_BANK
-		end--]]
-	for i=0, GetBagSize(BAG_BANK) do
-		if checkOneSlot(condition,amount,check2,bonusCondition,max, BAG_BANK, i) then return
-		elseif checkOneSlot(condition,amount,check2,bonusCondition,max, BAG_SUBSCRIBER_BANK, i) then return
 		end
-		
+		return matches[position][1], matches[position][2]
+	end
+
+end
+
+local function potionGrabRefactored(questCondition, amountRequired, validItemTypes)
+	questCondition = string.gsub(questCondition, " ", " ") -- First is a NO-BREAK SPACE, 2nd a SPACE, copied from Ayantir's BMR just in case
+	local potentialMatches = {}
+	if IsESOPlusSubscriber() then -- check ESO+ bank
+		for i = 0, GetBagSize(BAG_BANK) do
+			if isPotentialMatch(questCondition, validItemTypes, BAG_SUBSCRIBER_BANK, i) then 
+				table.insert(potentialMatches, {BAG_SUBSCRIBER_BANK, i})
+			end
+		end
+	end
+	for i=0, GetBagSize(BAG_BANK) do -- check the rest of the bank
+		if isPotentialMatch(questCondition, validItemTypes, BAG_BANK, i) then 
+			-- Add to match list
+			table.insert(potentialMatches, {BAG_BANK, i})
+		end
+	end
+	local bag, slot = filterMatches(potentialMatches)
+	if bag and slot then
+		zo_callLater(function()moveItem(amountRequired, bag, slot) end, 50)
+	else
+		-- No item was found. Would love to do an error message but would need to filter out delivery, glyphs, etc. in other languages
 	end
 end
 
 local function exceptions(condition)
+	
+	condition = WritCreater.bankExceptions(condition)
 	return condition
 end
 
@@ -100,88 +145,62 @@ local function queueRun()
 		queue[1]()
 		table.remove(queue, 1)
 		queuePosition = queuePosition+1
-		queueRun()
-		
+		zo_callLater(queueRun, 10)
+		--queueRun()
 	else
 		queuePosition = 1
 		queue = {}
-		emptySlots = {}
+		--emptySlots = {}
 	end
+end
 
+local function addToQueue(questIndex, validItemTypes)
+	for j=1,4 do 
+		local a=GetJournalQuestConditionInfo(questIndex, 1, j)
+		local cur, max =GetJournalQuestConditionValues(questIndex,1,j)
+
+		a=a:lower()
+		a = exceptions(a)
+		if cur < max and a~="" then 
+			queue[#queue + 1] = function() potionGrabRefactored(a, max - cur, validItemTypes) end
+		end
+	end
 end
 
 alchGrab = function (event) 
 	findEmptySlots(BAG_BACKPACK)
-	
-	if WritCreater.savedVars.shouldGrab and WritCreater.lang =="en" then
+	if WritCreater.lang =="jp" then return end
+	if WritCreater.savedVars.shouldGrab then
 		local nilFunc = function(i, b)return true end
 		local writs = WritCreater.writSearch()
 		local questIndex = writs[CRAFTING_TYPE_ALCHEMY]
 		if questIndex then
-			for j=1,4 do 
-				local a=GetJournalQuestConditionInfo(questIndex, 1, j)
-				local cur, max =GetJournalQuestConditionValues(questIndex,1,j)
-				a=a:lower()
-				if a:find("craft") and cur<max then
-					a = exceptions(a)
-					dqueue[#dqueue+1] = a
-					a=WritCreater.parser(a)
-					if a[4] =="ravage" then
-						a = a[2].." of "..a[4].." "..a[5]
-					else
-						a =a[2].." of "..a[4]
-					end
-					queue[#queue+1] = function() potionGrab(a,1,false, function(i,BAG_BANK) local temp = {ZO_LinkHandler_ParseLink(GetItemLink(BAG_BANK,i))} if tonumber(temp[24]) then return tonumber(temp[24])>0 else return false end end) 
-					--d(tonumber(select(24,ZO_LinkHandler_ParseLink(GetItemLink(BAG_BANK,i))))>0)
-					
-				end
-				elseif a:find("acquire") and cur<max then
-					a = exceptions(a)
-					local place = string.find(a,":")
-					a = string.sub(a,9,place-1)
-					dqueue[#dqueue+1] = a
-					queue[#queue+1] = function() potionGrab(a,max-cur,false,nilFunc,max) end
-				end
-			end
+			local validItemTypes = {
+					[ITEMTYPE_POTION] = true, 
+					[ITEMTYPE_POISON] = true, 
+					[ITEMTYPE_POTION_BASE] = true, 
+					[ITEMTYPE_POTION_BASE] = true, 
+					[ITEMTYPE_REAGENT] = true
+				}
+			addToQueue(questIndex, validItemTypes)
+			
 		end
 		questIndex = writs[CRAFTING_TYPE_ENCHANTING]
 		if questIndex then
-			for j=1,4 do 
-				local a=GetJournalQuestConditionInfo(questIndex, 1, j)
-				local cur, max = GetJournalQuestConditionValues(questIndex,1,j)
-				a=a:lower()
-				if a:find("acquire") and cur<max then
-					a = exceptions(a)
-					a = WritCreater.parser(a)
-					dqueue[#dqueue+1] = a[2]
-					queue[#queue+1] = function() potionGrab(a[2],max-cur,true,nilFunc,max) end
-				end
-			end
+			local validItemTypes = {
+				[ITEMTYPE_ENCHANTING_RUNE_ASPECT] = true, 
+				[ITEMTYPE_ENCHANTING_RUNE_ESSENCE] = true, 
+				[ITEMTYPE_ENCHANTING_RUNE_POTENCY] = true
+			}
+			addToQueue(questIndex, validItemTypes)
 		end
 		questIndex = writs[CRAFTING_TYPE_PROVISIONING]
 		if questIndex then
-
-			for j=1,4 do 
-				local a=GetJournalQuestConditionInfo(questIndex, 1, j)
-				local cur, max =GetJournalQuestConditionValues(questIndex,1,j)
-				a=a:lower()
-				if a:find("craft") and cur<max then
-
-					a = exceptions(a)
-
-					a=string.gsub(a,"-"," ")
-
-					a = string.gsub(a,"craft ", "")
-					local place = string.find(a,":")
-
-					a = string.sub(a,0,place-1)
-
-					dqueue[#dqueue+1] = a
-
-					queue[#queue+1] = function() potionGrab(a,max-cur,false,function(i, BAG_BANK) local temp = {ZO_LinkHandler_ParseLink(GetItemLink(BAG_BANK,i))} if tonumber(temp[5]) then  return tonumber(temp[5])>0 else return false end end ,max)
-					end
-				end
-			end
+			local validItemTypes = {
+				[ITEMTYPE_DRINK] = true, 
+				[ITEMTYPE_FOOD] = true
+			}
+			addToQueue(questIndex, validItemTypes)
 		end
 		if #queue>0 then
 
@@ -210,3 +229,5 @@ function WritCreater.setupAlchGrabEvents()
 	--I use SCENE_MANAGER:IsShowing("bank")
 
 end
+--|H1:item:27036:307:50:0:0:0:0:0:0:0:0:0:0:0:0:36:0:0:0:0:0|h|h
+--|H1:item:54339:308:50:0:0:0:0:0:0:0:0:0:0:0:0:36:1:0:0:0:65536|h|h

@@ -257,7 +257,7 @@ function WritCreater.Options() --Sentimental
 		end,
 	},}
 
-  if WritCreater.lang =="en" then
+  if WritCreater.lang ~="jp" then
   table.insert(options, {
 	type = "checkbox",
 	name = WritCreater.optionStrings["writ grabbing"] ,

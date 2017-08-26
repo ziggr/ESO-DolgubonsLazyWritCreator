@@ -207,19 +207,22 @@ local function slotUpdateHandler(event, bag, slot, isNew,...)
 	else
 		autoLoot = GetSetting(SETTING_TYPE_LOOT,LOOT_SETTING_AUTO_LOOT) == "1"
 	end
-	if isNew then else return end
+	if not isNew then return end
+	local link = GetItemLink(bag, slot)
 	local function attemptOpenContainer(bag, slot)
-		if GetSlotCooldownInfo( 1 )>0 then
+		if GetSlotCooldownInfo( 1 )>0 or IsInteractionUsingInteractCamera() then
 			zo_callLater(function()attemptOpenContainer(bag, slot) end , GetSlotCooldownInfo( 1 ) + 100)
 		else
 			openContainer(bag, slot)
 		end
 	end
-	if GetItemLinkFlavorText(GetItemLink(bag,slot)) ==rewardFlavourText  and WritCreater.savedVars.lootContainerOnReceipt then
+	if (GetItemLinkFlavorText(link) ==rewardFlavourText or GetItemLinkFlavorText(link) ==matReward) and WritCreater.savedVars.lootContainerOnReceipt then
+		--d("attempting to open "..link)
 		attemptOpenContainer(bag, slot)
 		
-	elseif matReward == GetItemLinkFlavorText(GetItemLink(bag, slot)) then
+	elseif matReward == GetItemLinkFlavorText(link) then
 		if not autoLoot or not WritCreater.savedVars.lootContainerOnReceipt then return end
+		--d("attempting to open "..link)
 		attemptOpenContainer(bag, slot)
 		
 	end

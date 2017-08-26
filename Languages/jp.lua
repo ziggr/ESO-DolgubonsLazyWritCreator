@@ -306,6 +306,25 @@ local exceptions =
 	}
 }
 
+
+local bankExceptions = 
+{
+	["original"] = {
+		
+	},
+	["corrected"] = {
+		
+	}
+}
+
+function WritCreater.bankExceptions(condition)
+	condition = string.gsub(condition, ":", " ")
+	for i = 1, #bankExceptions["original"] do
+		condition = string.gsub(condition,bankExceptions["original"][i],bankExceptions["corrected"][i])
+	end
+	return condition
+end
+
 function WritCreater.exceptions(condition)
 	condition = string.gsub(condition, "?"," ")
 	condition = string.lower(condition)
@@ -484,7 +503,8 @@ local WritRewardNames = { -- these are the containers you receive as writ reward
 	[3] = "仕立師のかばん",
 	[4] = "鍛冶師の木枠箱",
 	[5] = "調理師のバック",
-	[6] = "木工師のケース"
+	[6] = "木工師のケース",
+	[7] = "1111111111",
 }
 
 

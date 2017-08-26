@@ -301,11 +301,17 @@ local function SmithingMasterWrit(journalIndex, info, station, isArmour, materia
 	if complete == 1 then return end
 	if condition =="" then return end
 	local conditionStrings = {}
-	
-	conditionStrings["pattern"], conditionStrings["quality"], conditionStrings["trait"],
-	  conditionStrings["set"], conditionStrings["style"] = splitCondition(condition, isQuest)
+	if WritCreater.lang =="de" then
+		conditionStrings["pattern"], conditionStrings["set"], conditionStrings["style"],
+		  conditionStrings["trait"], conditionStrings["quality"] = splitCondition(condition, isQuest)
+	else
+		conditionStrings["pattern"], conditionStrings["quality"], conditionStrings["trait"],
+		  conditionStrings["set"], conditionStrings["style"] = splitCondition(condition, isQuest)
+	end
 
-
+	--for k, v in pairs(conditionStrings) do
+	--	d(k, v)
+	--end
 	local pattern =  smithingSearch(conditionStrings["pattern"], info) --search pattern
 
 	if pattern[1] =="" and pattern[2]==0 then return end
