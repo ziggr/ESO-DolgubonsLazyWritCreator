@@ -12,7 +12,7 @@ end
 local function getItemLinkFromItemId(itemId) local name = GetItemLinkName(ZO_LinkHandler_CreateLink("Test Trash", nil, ITEM_LINK_TYPE,itemId, 1, 26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 10000, 0)) 
 	return ZO_LinkHandler_CreateLink(zo_strformat("<<t:1>>",name), nil, ITEM_LINK_TYPE,itemId, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) end
 
-local function areIdsValid(potency, essence, aspect)
+local function areIdsValid(solvent, reagent1, reagent2, reagent3)
 	if GetItemLinkEnchantingRuneClassification( getItemLinkFromItemId(potency)) ~= ENCHANTING_RUNE_POTENCY
 		or GetItemLinkEnchantingRuneClassification( getItemLinkFromItemId(aspect)) ~= ENCHANTING_RUNE_ASPECT
 		or GetItemLinkEnchantingRuneClassification( getItemLinkFromItemId(essence)) ~= ENCHANTING_RUNE_ESSENCE then
@@ -38,12 +38,12 @@ end
 
 -- Since bag indexes can change, this ignores those. Instead, it takes in the name, or the index (table of indexes is found in table above, and is specific to this library)
 -- Bag indexes will be determined at time of crafting	
-local function LLC_CraftEnchantingGlyphItemID(self, potencyItemID, essenceItemID, aspectItemID, autocraft, reference)
-	dbug('FUNCTION:LLCEnchantCraft')
+local function LLC_CraftAlchemy(self, solventItemID, reagent1ItemID, reagent2ItemID, reagent3ItemID, autocraft, reference)
+	dbug('FUNCTION:LLCAlchCraft')
 	if reference == nil then reference = "" end
 	if not self then d("Please call with colon notation") end
 	if autocraft==nil then autocraft = self.autocraft end
-	if not potencyItemID or not essenceItemID or not aspectItemID then  return end
+	if not solventItemID or not reagent1ItemID or not reagent2ItemID then  return end
 	if not areIdsValid(potencyItemID, essenceItemID, aspectItemID) then d("invalid essence Ids") return end
 
 	table.insert(craftingQueue[self.addonName][CRAFTING_TYPE_ENCHANTING],

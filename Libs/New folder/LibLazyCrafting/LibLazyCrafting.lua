@@ -15,12 +15,17 @@ This is a work in progress.
 -- Initialize libraries
 
 local function dbug(...)
-	--DolgubonDebugRunningDebugString(...)
+	DolgubonDebugRunningDebugString(...)
 end
 local libLoaded
-local LIB_NAME, VERSION = "LibLazyCrafting", 1.2
+local LIB_NAME, VERSION = "LibLazyCrafting", 0.3
 local LibLazyCrafting, oldminor = LibStub:NewLibrary(LIB_NAME, VERSION)
 if not LibLazyCrafting then return end
+
+-- Give add-on authors a way to check for required version beyond
+-- "I hope LibStub returns what I asked for!"
+LLCAddonInteractionTable["version"] = VERSION
+
 
 LibLazyCrafting.craftInteractionTables = 
 {
@@ -179,7 +184,8 @@ end
 
 
 LibLazyCrafting.functionTable.findItemLocationById = findItemLocationById
-	-- Returns a table of [slot_index] --> stack count for each bag slot that holds
+
+-- Returns a table of [slot_index] --> stack count for each bag slot that holds
 -- the requested item.
 --
 -- ALSO includes the first empty slot in bag, since there is still a chance
@@ -342,7 +348,7 @@ end
 local function LLC_CancelItem(self, station, position)
 	if position == nil then
 		if station == nil then
-			craftingQueue[self.addonName] = {{},{},{},{},{},{},}
+			craftingQueue[self.addonName]= {{},{},{},{},{},{}}
 		else
 			for j = 1, #craftingQueue[self.addonName][station] do
 				table.remove(craftingQueue[self.addonName][i], j)
@@ -388,12 +394,12 @@ LibLazyCrafting.functionTable.craftItem = LLC_CraftItem
 LibLazyCrafting.functionTable.CraftAllItems = LLC_CraftAllItems
 LibLazyCrafting.functionTable.findItemByReference =  LLC_FindItemByReference
 
+	
 local function LLC_GetMatRequirements(self, reference)
 	local requests = LLC_FindItemByReference(self, reference)
 	for i = 1, #requests do
 		LibLazyCrafting.craftInteractionTables[requests[i].station]["materialRequirements"](requests[i])
 	end
-
 end
 
 function LibLazyCrafting:Init()
@@ -428,10 +434,6 @@ function LibLazyCrafting:Init()
 		craftResultFunctions[addonName] = functionCallback
 
 		LLCAddonInteractionTable.autocraft = autocraft
-
-		-- Give add-on authors a way to check for required version beyond
-		-- "I hope LibStub returns what I asked for!"
-		LLCAddonInteractionTable["version"] = VERSION
 
 		return LLCAddonInteractionTable
 	end
@@ -541,18 +543,16 @@ end
 -- Additionally, the craft complete event is called BEFORE the end crafting station interaction event
 -- So this function will check if the interaction is still going on, and call the endinteraction function if needed
 -- which bypasses the event Manager, so that it is called first.
-
+timetest = 10
 local function CraftComplete(event, station)
-	--d("Event:completion")
 	local LLCResult = nil
 	for k,v in pairs(LibLazyCrafting.craftInteractionTables) do
 		if v["check"](station) then
 			if GetCraftingInteractionType()==0 then
-				--d("Calling exit complete, why???")
 				endInteraction(EVENT_END_CRAFTING_STATION_INTERACT, station)
 				zo_callLater(function() v["complete"](station) end, timetest)
 			else
-				--d("calling complete")
+
 				v["complete"](station)
 				v["function"](station) 
 			end

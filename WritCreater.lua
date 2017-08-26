@@ -15,6 +15,8 @@ d("The winner is "..t[winner].."!")]]
 --local d = function() for i = 1, #abc do end end
 --test
 
+--- TO DO!!!
+--- Give priority to potions or poisons with only one trait!
 
 
 WritCreater = WritCreater or {}
@@ -50,7 +52,7 @@ WritCreater.default =
 	["autoAccept"] = true, 
 	["keepNewContainer"] = true,
 	["lootContainerOnReceipt"] = true,	
-	["lootOutput"] = true,
+	["lootOutput"] = false,
 }
 WritCreater.defaultAccountWide = {
 	["masterWrits"] = true,

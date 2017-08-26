@@ -352,11 +352,15 @@ local bankExceptions =
 		"essenzen",
 		"arenthischen",
 		"gelnden",
+		"heiligen",
+		"atherischen",
 	},
 	["corrected"] = {
 		"essenz",
 		"arenthischer",
 		"gelnder",
+		"Heiliger",
+		"atherischer",
 	}
 }
 

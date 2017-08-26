@@ -164,7 +164,7 @@ local craftInfo =
 				[6] = "Calcinium Ingots",
 				[7] = "Galatite Ingots",
 				[8] = "Quicksilver Ingots",
-				[9] = "Voidsteel Ingots",
+				[9] = "Voidstone Ingots",
 				[10]= "Rubedite Ingots",
 			}
 		},
