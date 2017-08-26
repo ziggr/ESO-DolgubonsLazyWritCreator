@@ -28,7 +28,9 @@ libs\LibAddonMenu-2.0\controls\slider.lua
 libs\LibAddonMenu-2.0\controls\texture.lua
 
 libs\LibLazyCrafting\LibLazyCrafting.lua
+libs\LibLazyCrafting\Alchemy.lua
 libs\LibLazyCrafting\Enchanting.lua
+libs\LibLazyCrafting\Provisioning.lua
 libs\LibLazyCrafting\Smithing.lua
 
 libs\LibCustomMenu\LibCustomMenu.lua
