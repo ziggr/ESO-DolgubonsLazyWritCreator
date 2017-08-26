@@ -548,6 +548,9 @@ WritCreater.optionStrings["master writ saver"]							= "Meisterschriebe sperren"
 WritCreater.optionStrings["master writ saver tooltip"]					= "Sperrt die Möglichkeit Meisterschriebe anzunehmen"
 WritCreater.optionStrings["loot output"]								= "Wertvolle Belohnung Hinweis"
 WritCreater.optionStrings["loot output tooltip"]						= "Gebe eine Nachricht aus sobald du wertvolle Gegenstände aus einem Schrieb erhälst"
+WritCreater.optionStrings["writ grabbing"]								= "Gegenstände entnehmen"
+WritCreater.optionStrings["writ grabbing tooltip"]						= "Entnimmt Gegenstände die für Schriebe benötigt werden (z.B. Nirnwurz, Ta, usw.) aus der Bank"
+
 --"<<1>> erhalten"
 function WritCreater.langWritRewardBoxes () return {
 	[1] = "Alchemistengefäß",

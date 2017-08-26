@@ -540,6 +540,8 @@ WritCreater.optionStrings["master writ saver"]							= "Save Master Writs"
 WritCreater.optionStrings["master writ saver tooltip"]					= "Prevents Master Writs from being accepted"
 WritCreater.optionStrings["loot output"]								= "Alerte sur les récompenses précieuses"
 WritCreater.optionStrings["loot output tooltip"]						= "Afficher un message lorsque des objets de grande valeur sont reçus d'une commande d'artisanat"
+WritCreater.optionStrings["writ grabbing"]								= "Grab writ items"
+WritCreater.optionStrings["writ grabbing tooltip"]						= "Grab items required for writs (e.g. nirnroot, Ta, etc.) from the bank"
 
 
 

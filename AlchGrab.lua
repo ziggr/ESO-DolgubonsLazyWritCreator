@@ -1,4 +1,4 @@
-
+﻿
 local function dbug(...)
 	DolgubonGlobalDebugOutput(...)
 end
@@ -19,7 +19,7 @@ local timesToRun = 0
 
 local queue = {}
 
-local queuePosition = 1
+
 
 
 
@@ -59,7 +59,6 @@ end
 
 local function moveItem( amountRequired, bag, slot)
 	local emptySlot = emptySlots[1]
-	
 	if emptySlot then
 		table.remove(emptySlots,1)
 		if IsProtectedFunction("RequestMoveItem") then
@@ -76,11 +75,11 @@ end
 
 local function isPotentialMatch(questCondition, validItemTypes, bag, slot)
 	local itemType = GetItemType(bag, slot)
+	if name == "" then return false end
 	if validItemTypes[itemType] then
 		local name = GetItemName(bag, slot)
-		if name == "" then return false end
-		local link = GetItemLink(bag, slot)
-		if IsItemLinkConsumable(link) and not IsItemLinkCrafted(link) then return false end
+		local link = GetItemLink(bag, slot)		
+		if validItemTypes[itemType][2] and validItemTypes[itemType][2](link, bag, slot) then return false end
 		if strFind(questCondition, " "..name.." ") then
 			return true
 		end
@@ -125,7 +124,14 @@ local function potionGrabRefactored(questCondition, amountRequired, validItemTyp
 	end
 	local bag, slot = filterMatches(potentialMatches)
 	if bag and slot then
-		zo_callLater(function()moveItem(amountRequired, bag, slot) end, 50)
+		local stackSize = GetSlotStackSize(bag, slot)
+		if stackSize < amountRequired then
+			moveItem(stackSize, bag, slot)
+			zo_callLater(function() potionGrabRefactored(questCondition, amountRequired -stackSize, validItemTypes ) end , 50)
+		else
+			moveItem(amountRequired, bag, slot)
+		end
+
 	else
 		-- No item was found. Would love to do an error message but would need to filter out delivery, glyphs, etc. in other languages
 	end
@@ -144,11 +150,9 @@ local function queueRun()
 	if queue[1] then
 		queue[1]()
 		table.remove(queue, 1)
-		queuePosition = queuePosition+1
 		zo_callLater(queueRun, 10)
 		--queueRun()
 	else
-		queuePosition = 1
 		queue = {}
 		--emptySlots = {}
 	end
@@ -161,46 +165,69 @@ local function addToQueue(questIndex, validItemTypes)
 
 		a=a:lower()
 		a = exceptions(a)
+		a = string.gsub(a, " ", " ") -- First is a NO-BREAK SPACE, 2nd a SPACE, copied from Ayantir's BMR just in case
 		if cur < max and a~="" then 
+
 			queue[#queue + 1] = function() potionGrabRefactored(a, max - cur, validItemTypes) end
+
+			
 		end
 	end
 end
+
+local function equipmentCheck(link, bag, slot)
+	return GetItemCreatorName(bag, slot)~= GetUnitName("player") or 
+		GetItemTrait(bag, slot) ~= ITEM_TRAIT_TYPE_NONE or GetItemLinkQuality(link) ~= ITEM_QUALITY_NORMAL or 
+		GetItemRequiredChampionPoints(bag, slot) == 160 or IsItemPlayerLocked(bag, slot) 
+end
+
+
+local validItemTypes = 
+{
+	[CRAFTING_TYPE_ALCHEMY] = {
+		[ITEMTYPE_POTION] = {true, function(link) return not IsItemLinkCrafted(link) end},
+		[ITEMTYPE_POISON] = {true, function(link) return not IsItemLinkCrafted(link) end},
+		[ITEMTYPE_POTION_BASE] = {true},
+		[ITEMTYPE_POTION_BASE] = {true},
+		[ITEMTYPE_REAGENT] = {true},
+	},
+	[CRAFTING_TYPE_ENCHANTING] = {
+		[ITEMTYPE_ENCHANTING_RUNE_ASPECT] = {true},
+		[ITEMTYPE_ENCHANTING_RUNE_ESSENCE] = {true},
+		[ITEMTYPE_ENCHANTING_RUNE_POTENCY] = {true},
+		[ITEMTYPE_GLYPH_ARMOR] = {true, function(link) return not IsItemLinkCrafted(link) end},
+	},
+	[CRAFTING_TYPE_PROVISIONING] = {
+		[ITEMTYPE_DRINK] = {true, function(link) return not IsItemLinkCrafted(link) end},
+		[ITEMTYPE_FOOD] = {true, function(link) return not IsItemLinkCrafted(link) end},
+	},
+	-- [[
+	[CRAFTING_TYPE_BLACKSMITHING] = {
+		[ITEMTYPE_ARMOR] = {true, equipmentCheck},
+		[ITEMTYPE_WEAPON] = {true,equipmentCheck},
+	},
+	[CRAFTING_TYPE_WOODWORKING] ={
+		[ITEMTYPE_ARMOR] = {true,equipmentCheck},
+		[ITEMTYPE_WEAPON] = {true,equipmentCheck },
+	
+	},
+	[CRAFTING_TYPE_CLOTHIER] ={
+		[ITEMTYPE_ARMOR] = {true,equipmentCheck},
+	
+	},
+	--]]
+}
+
 
 alchGrab = function (event) 
 	findEmptySlots(BAG_BACKPACK)
 	if WritCreater.lang =="jp" then return end
 	if WritCreater.savedVars.shouldGrab then
-		local nilFunc = function(i, b)return true end
 		local writs = WritCreater.writSearch()
-		local questIndex = writs[CRAFTING_TYPE_ALCHEMY]
-		if questIndex then
-			local validItemTypes = {
-					[ITEMTYPE_POTION] = true, 
-					[ITEMTYPE_POISON] = true, 
-					[ITEMTYPE_POTION_BASE] = true, 
-					[ITEMTYPE_POTION_BASE] = true, 
-					[ITEMTYPE_REAGENT] = true
-				}
-			addToQueue(questIndex, validItemTypes)
-			
-		end
-		questIndex = writs[CRAFTING_TYPE_ENCHANTING]
-		if questIndex then
-			local validItemTypes = {
-				[ITEMTYPE_ENCHANTING_RUNE_ASPECT] = true, 
-				[ITEMTYPE_ENCHANTING_RUNE_ESSENCE] = true, 
-				[ITEMTYPE_ENCHANTING_RUNE_POTENCY] = true
-			}
-			addToQueue(questIndex, validItemTypes)
-		end
-		questIndex = writs[CRAFTING_TYPE_PROVISIONING]
-		if questIndex then
-			local validItemTypes = {
-				[ITEMTYPE_DRINK] = true, 
-				[ITEMTYPE_FOOD] = true
-			}
-			addToQueue(questIndex, validItemTypes)
+		for craft, validTYpes in pairs(validItemTypes) do
+			if writs[craft] then
+				addToQueue(writs[craft], validTYpes)
+			end
 		end
 		if #queue>0 then
 
