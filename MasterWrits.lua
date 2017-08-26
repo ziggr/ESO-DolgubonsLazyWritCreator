@@ -1,4 +1,4 @@
-﻿local DolgubonDebugRunningDebugString = ""
+local DolgubonDebugRunningDebugString = ""
 DolgubonGlobalDebugToggle = false
 local localDebugToggle = false
 function DolgubonGlobalDebugOutput(...)
@@ -138,11 +138,10 @@ end
 WritCreater.buildTraitTable()
 
 styles = {}
-for i = 1, GetNumSmithingStyleItems() do
-	if GetString("SI_ITEMSTYLE", i)~="" then
-		styles[#styles + 1] = {myLower(GetString("SI_ITEMSTYLE", i)),i+1 }
-		
-	end
+for i = 1, GetNumValidItemStyles() do
+	local styleItemIndex = GetValidItemStyleId(i)
+	local itemName = GetItemStyleName(styleItemIndex)
+	styles[#styles + 1] = {itemName,styleItemIndex }
 end
 
 
@@ -285,9 +284,6 @@ local function splitCondition(condition, isQuest)
 end
 
 local function SmithingMasterWrit(journalIndex, info, station, isArmour, material, reference, sealedText)
-if GetAPIVersion() == 100020 then
-		d("Due to API changes, this Master Writ may NOT be crafted properly! To avoid this, please update the addon before crafting!")
-end
 	dbug("FUNCTION:SmithingMasterHandler")
 
 	if WritCreater.lang == "de" then for i = 1, #info do  info[i][1] = germanRemoveEN(info[i][1])   end end
@@ -352,7 +348,6 @@ end
 		WritCreater.LLCInteraction:cancelItemByReference(reference)
 
 		WritCreater.LLCInteraction:CraftSmithingItemByLevel( pattern[2], true , 150, style[2], trait[2], false, station, setIndex, quality[2], true, reference)
-
 	else
 		dbug("ERROR:RequirementMissing")
 	end

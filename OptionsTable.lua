@@ -2,14 +2,34 @@ if WritCreater.lang ~= "none" then
 
 WritCreater.styleNames = {}
 
-for styleItemIndex = 1, GetNumSmithingStyleItems() do
-	local  itemName = GetSmithingStyleItemInfo(styleItemIndex)
-	if itemName ~= "" then
-		table.insert(WritCreater.styleNames,{styleItemIndex,itemName})
-	end
+for i = 1, GetNumValidItemStyles() do
+	local styleItemIndex = GetValidItemStyleId(i)
+	local  itemName = GetItemStyleName(styleItemIndex)
+	local styleItem = GetSmithingStyleItemInfo(styleItemIndex)
+
+	table.insert(WritCreater.styleNames,{styleItemIndex,itemName, styleItem})
+
 end
 
-
+--[[{
+			type = "dropbox",
+			name = "Autoloot Behaviour",
+			tooltip = "Choose when the addon will autoloot writ reward containers",
+			choices = {"Copy the", "Autoloot", "Never Autoloot"},
+			choicesValues = {1,2,3},
+			getFunc = function() if WritCreater.savedVars.ignoreAuto then return 1 elseif WritCreater.savedVars.autoLoot then return 2 else return 3 end end,
+			setFunc = function(value) 
+				if value == 1 then 
+					WritCreater.savedVars.ignoreAuto = false
+				elseif value == 2 then  
+					WritCreater.savedVars.autoLoot = true
+					WritCreater.savedVars.ignoreAuto = true
+				elseif value == 3 then
+					WritCreater.savedVars.ignoreAuto = true
+					WritCreater.savedVars.autoLoot = false
+				end
+			end,
+		},]]
 
 local function mypairs(tableIn)
 	local t = {}
@@ -23,14 +43,14 @@ end
 
 local optionStrings = WritCreater.optionStrings
 local function styleCompiler()
-
 	local submenuTable = {}
 	local styleNames = WritCreater.styleNames
 	for k,v in ipairs(styleNames) do
+
 		local option = {
 			type = "checkbox",
 			name = zo_strformat("<<1>>", v[2]),
-			tooltip = optionStrings["style tooltip"](v[2]),
+			tooltip = optionStrings["style tooltip"](v[2], v[3]),
 			getFunc = function() return WritCreater.savedVars.styles[v[1]] end,
 			setFunc = function(value)
 				WritCreater.savedVars.styles[v[1]] = value
@@ -122,19 +142,23 @@ function WritCreater.Options() --Sentimental
 			setFunc = function(value) WritCreater.savedVars.exitWhenDone = value end,
 		},
 		{
-			type = "checkbox",
-			name = WritCreater.optionStrings["ignore autoloot"] ,
-			tooltip =WritCreater.optionStrings["ignore autoloot tooltip"]   ,
-			getFunc = function() return WritCreater.savedVars.ignoreAuto end,
-			setFunc = function(value) WritCreater.savedVars.ignoreAuto = value end,
-		},
-		{
-			type = "checkbox",
-			name = WritCreater.optionStrings["autoloot containters"] ,
-			tooltip = WritCreater.optionStrings["autoLoot containters tooltip"],
-			getFunc = function() return WritCreater.savedVars.autoLoot end,
-			setFunc = function(value) WritCreater.savedVars.autoLoot = value end,
-			disabled = function() return not WritCreater.savedVars.ignoreAuto end,
+			type = "dropdown",
+			name = "Autoloot Behaviour",
+			tooltip = "Choose when the addon will autoloot writ reward containers",
+			choices = {"Copy the setting under the Gameplay settings", "Autoloot", "Never Autoloot"},
+			choicesValues = {1,2,3},
+			getFunc = function() if WritCreater.savedVars.ignoreAuto then return 1 elseif WritCreater.savedVars.autoLoot then return 2 else return 3 end end,
+			setFunc = function(value) 
+				if value == 1 then 
+					WritCreater.savedVars.ignoreAuto = false
+				elseif value == 2 then  
+					WritCreater.savedVars.autoLoot = true
+					WritCreater.savedVars.ignoreAuto = true
+				elseif value == 3 then
+					WritCreater.savedVars.ignoreAuto = true
+					WritCreater.savedVars.autoLoot = false
+				end
+			end,
 		},
 		{
 			type = "checkbox",

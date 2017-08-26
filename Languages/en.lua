@@ -504,7 +504,7 @@ end
 
 --Options table Strings
 WritCreater.optionStrings = {}
-WritCreater.optionStrings["style tooltip"]								= function (styleName) return zo_strformat("Allow the <<1>> style to be used for crafting",styleName) end 
+WritCreater.optionStrings["style tooltip"]								= function (styleName, styleStone) return zo_strformat("Allow the <<1>> style, which uses the <<2>> style stone, to be used for crafting",styleName, styleStone) end 
 WritCreater.optionStrings["show craft window"]							= "Show Craft Window"
 WritCreater.optionStrings["show craft window tooltip"]					= "Shows the crafting window when a crafting station is open"
 WritCreater.optionStrings["autocraft"]									= "AutoCraft"
@@ -553,6 +553,9 @@ WritCreater.optionStrings["master writ saver"]							= "Save Master Writs"
 WritCreater.optionStrings["master writ saver tooltip"]					= "Prevents Master Writs from being accepted"
 WritCreater.optionStrings["loot output"]								= "Valuable Reward Alert"
 WritCreater.optionStrings["loot output tooltip"]						= "Output a message when valuable items are received from a writ"
+WritCreater.optionStrings["autoloot behaviour"]							= "Autoloot Behaviour"
+WritCreater.optionStrings["autoloot behaviour tooltip"]					= "Choose when the addon will autoloot writ reward containers"
+WritCreater.optionStrings["autoloot behaviour choices"]					= {"Copy the setting under the Gameplay settings", "Autoloot", "Never Autoloot"}
 
 function WritCreater.langWritRewardBoxes () return {
 	[CRAFTING_TYPE_ALCHEMY] = "Alchemist's Vessel",

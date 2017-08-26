@@ -62,7 +62,7 @@ local requirementJumps = { -- At these material indexes, the material required c
 	[10] = 40,
 }
 
-additionalRequirements = -- Seperated by station. The additional amount of mats added to the base amount.
+local additionalRequirements = -- Seperated by station. The additional amount of mats added to the base amount.
 {
 	[CRAFTING_TYPE_BLACKSMITHING] = 
 	{ 2, 2, 2, 4, 4, 4, 1, 6, 4, 4, 4, 5, 4, 4,
@@ -77,7 +77,7 @@ additionalRequirements = -- Seperated by station. The additional amount of mats 
 }
 
 local currentStep = 1
-baseRequirements = {}
+local baseRequirements = {}
 for i = 1, 41 do
 	if i == 41 then
 		baseRequirements[i] = baseRequirements[40]

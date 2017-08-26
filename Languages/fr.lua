@@ -475,7 +475,7 @@ WritCreater.strings  = {
 
 
 WritCreater.optionStrings = {}
-WritCreater.optionStrings["style tooltip"]                            = function(nameOfStyle) return zo_strformat( "Autoriser le style <<1>> a être utilisé pour l'artisanat", nameOfStyle) end
+WritCreater.optionStrings["style tooltip"]                            = function (styleName, styleStone) return zo_strformat("Allow the <<1>> style, which uses <<2>> to be used for crafting",styleName) end 
 WritCreater.optionStrings["show craft window"]                        = "Afficher la fenêtre de craft"
 WritCreater.optionStrings["show craft window tooltip"]                = "Afficher la fenêtre de craft automatique lorsque la station d'artisanat est ouverte"
 WritCreater.optionStrings["autocraft"]                                = "Craft automatique"

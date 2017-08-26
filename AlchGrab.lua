@@ -198,14 +198,6 @@ WritCreater.alchGrab = alchGrab
 
 --SLASH_COMMANDS['/testpotion'] = returnPotionLevel
 
-local function alchCall()
-	timesToRun = 1
-	queue = {}
-	alchGrab()
-
-	
-end
-
 function WritCreater.setupAlchGrabEvents()
 
 	EVENT_MANAGER:RegisterForEvent(WritCreater.name, EVENT_QUEST_ADDED, function(event, journalIndex, name) 
@@ -216,7 +208,5 @@ function WritCreater.setupAlchGrabEvents()
 
 	EVENT_MANAGER:RegisterForEvent(WritCreater.name, EVENT_OPEN_BANK, alchGrab)
 	--I use SCENE_MANAGER:IsShowing("bank")
-
-	EVENT_MANAGER:RegisterForEvent(WritCreater.name, EVENT_CRAFTING_STATION_INTERACT, alchCall)
 
 end

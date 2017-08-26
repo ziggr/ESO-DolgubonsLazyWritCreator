@@ -166,7 +166,7 @@ local function OnLootUpdated(event)
 	if autoLoot then
 		local lootInfo = {GetLootTargetInfo()}
 		local writRewardNames = WritCreater.langWritRewardBoxes ()
-		for i = 1, 6 do
+		for i = 1, 7 do
 			local a, b = string.find(lootInfo[1], writRewardNames[i])
 			if a then				
 				LOOT_SHARED:LootAllItems()

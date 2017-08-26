@@ -1,4 +1,4 @@
-﻿--Declarations
+--Declarations
 --GetSkillAbilityInfo(number SkillType skillType, number skillIndex, number abilityIndex)
 --GetSkillLineInfo(number SkillType skillType, number skillIndex)
 
@@ -18,7 +18,7 @@ d("The winner is "..t[winner].."!")]]
 
 
 WritCreater = WritCreater or {}
-
+WritCreater.name = "DolgubonsLazyWritCreator"
 
 WritCreater.settings = {}
 local LAM
@@ -181,7 +181,7 @@ local crafting = function() end
         SendMail("@sylviermoone", "Testing 1", "with requestopen, then closemailbox after") d("sent test")
         CloseMailbox()]]
 
-WritCreater.name = "DolgubonsLazyWritCreator"
+
 local indexRanges = { --the first tier is index 1-7, second is material index 8-12, etc
 	[1] = 7,
 	[2] = 12,
@@ -864,14 +864,14 @@ local tutorial1 = function () end
 
 local function temporarycraftcheckerjustbecause(eventcode, station)
 	
-	local currentAPIVersionOfAddon = 100018
-	if GetTimeStamp()>1503360000 then
-		currentAPIVersionOfAddon = currentAPIVersionOfAddon + 1
+	local currentAPIVersionOfAddon = 100020
+	if GetTimeStamp()>1494543600 then
+		--currentAPIVersionOfAddon = currentAPIVersionOfAddon + 1
 	end
-	if GetTimeStamp()>1503360000 and GetWorldName()~="PTS" then 
-
-		d("Update your addons!") 
-
+	if GetAPIVersion() > currentAPIVersionOfAddon and GetWorldName()~="PTS" then 
+		for i= 1, 10 do 
+			d("Update your addons!") 
+		end 
 	end
 
 	if GetAPIVersion() > currentAPIVersionOfAddon+1 and GetDisplayName()=="@Dolgubon" and GetWorldName()=="PTS"  then 
@@ -976,14 +976,6 @@ function WritCreater:Initialize()
 	WritCreater.savedVars = ZO_SavedVars:NewCharacterIdSettings("DolgubonsWritCrafterSavedVars", WritCreater.version, nil, WritCreater.default)
 	WritCreater.savedVarsAccountWide = ZO_SavedVars:NewAccountWide("DolgubonsWritCrafterSavedVars", WritCreater.version, nil, WritCreater.defaultAccountWide)
 
-	SLASH_COMMANDS['/dlazybank'] = function() 
-		WritCreater.savedVarsAccountWide["easyBank"] = not WritCreater.savedVarsAccountWide["easyBank"]
-		if WritCreater.savedVarsAccountWide["easyBank"] then
-			d("Reload the UI for this to take effect. Effect is on.")
-		else
-			d("Reload the UI for this to take effect. Effect is off.")
-		end
-	end
 
 	WritCreater.setupAlchGrabEvents()
 
