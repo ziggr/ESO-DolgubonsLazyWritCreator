@@ -31,8 +31,6 @@ local function copy(t)
 	return a
 end
 
-
-
 -----------------------------------------------------
 -- ENCHANTING USER INTERACTION FUNCTIONS
 
@@ -168,6 +166,17 @@ local function LLC_EnchantingEndInteraction(event ,station)
 
 end
 
+local function haveEnoughMats(...)
+	local IDs = {...}
+	for k, itemId in pairs (IDs) do
+		local bag, bank, craft = GetItemLinkStacks(getItemLinkFromItemId(itemId))
+		if bag + bank + craft == 0 then -- i.e.if the stack count of all is 0
+			return false
+		end
+	end
+	return true
+end
+
 
 LibLazyCrafting.craftInteractionTables[CRAFTING_TYPE_ENCHANTING] =
 {
@@ -175,7 +184,11 @@ LibLazyCrafting.craftInteractionTables[CRAFTING_TYPE_ENCHANTING] =
 	['function'] = LLC_EnchantingCraftinteraction,
 	["complete"] = LLC_EnchantingCraftingComplete,
 	["endInteraction"] = function(station) --[[endInteraction()]] end,
-	["isItemCraftable"] = function(station) if station == CRAFTING_TYPE_ENCHANTING then return true else return false end end,
+	["isItemCraftable"] = function(station, request) 
+		if station == CRAFTING_TYPE_ENCHANTING and haveEnoughMats(request.potencyItemID, request.essenceItemID, request.aspectItemID) then 
+			return true else return false 
+		end 
+	end,
 }
 
 LibLazyCrafting.functionTable.CraftEnchantingItemId = LLC_CraftEnchantingGlyphItemID

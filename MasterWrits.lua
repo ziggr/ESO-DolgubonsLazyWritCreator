@@ -211,17 +211,14 @@ end
 local function smithingSearch(condition, info, debug)
 	local matches = {}
 	for i = 1, #info do
-
 		local str = string.gsub(info[i][1], "-"," ")
 		if strFind(condition, str) then
 			matches[#matches+1] = {info[i] , i}
 		end
 	end
-
 	if #matches== 0 then
 		return {"",0} , -1
 	elseif #matches==1 then
-
 		return matches[1][1], matches[1][2]
 	else
 		local longest = 0
@@ -552,7 +549,8 @@ function WritCreater.InventorySlot_ShowContextMenu(rowControl,debugslot)
 
 					material = "Ruby Ash"
 				elseif station == CRAFTING_TYPE_CLOTHIER then
-					if flavour == GetItemLinkFlavorText(exampleSealedWrits[CRAFTING_TYPE_WOODWORKING]) then
+
+					if flavour == GetItemLinkFlavorText(exampleSealedWrits[CRAFTING_TYPE_CLOTHIER]) then
 						material = "Ancestor Silk"
 					else
 						material = "Rubedo Leather"

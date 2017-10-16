@@ -67,6 +67,10 @@
 							<Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP" offsetY="80" offsetX="10"/>
 				        	<Dimensions x="450"/>
 					    </Label>
+					    <Label name="$(parent)QuestOutput" font="ZoFontGame" text="" color="FFFFFF" wrapMode="TRUNCATE" horizontalAlignment="CENTER" verticalAlignment="TOP" width="400" height="400">
+							<Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP" offsetY="130" offsetX="10"/>
+				        	<Dimensions x="450"/>
+					    </Label>
 						<Button name="$(parent)Craft" alpha="1" inherits="ZO_DefaultButton" text="Craft" clickSound="Book_Acquired" topmost="true">
 					    	<Anchor point="BOTTOM" relativeTo="$(parent)" relativePoint="BOTTOM" offsetX="0" offsetY="-205" />
 					    	<FontColors normalColor="FFFFFF" mouseOverColor="d9d9d9" pressedColor="b3b3b3"/>

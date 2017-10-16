@@ -17,7 +17,7 @@ d("The winner is "..t[winner].."!")]]
 
 --- TO DO!!!
 --- Give priority to potions or poisons with only one trait!
-
+if GetDisplayName()~="@Dolgubon" then DolgubonsWritsBackdropQuestOutput.SetText = function() end end
 
 WritCreater = WritCreater or {}
 WritCreater.name = "DolgubonsLazyWritCreator"
@@ -487,6 +487,7 @@ local function setupConditionsTable(quest, info )
 	}
 	for i = 1, GetJournalQuestNumConditions(quest,1) do
 		conditions["text"][i], conditions["cur"][i], conditions["max"][i],_,conditions["complete"][i] = GetJournalQuestConditionInfo(quest, 1, i)
+		DolgubonsWritsBackdropQuestOutput:AddText("\n"..conditions["text"][i])
 		conditions["text"][i] = WritCreater.exceptions(conditions["text"][i])
 		--d(conditions["text"][i])
 		if conditions["complete"][i] or conditions["text"][i] == "" or conditions["cur"][i]== conditions["max"][i] then
@@ -510,6 +511,7 @@ local function writCompleteUIHandle()
 	craftingWrits = false
 
 	out(WritCreater.strings.complete)
+	DolgubonsWritsBackdropQuestOutput:SetText("")
 	--if WritCreater.savedVars.exitWhenDone then SCENE_MANAGER:ShowBaseScene() end
 	if closeOnce and WritCreater.IsOkayToExitCraftStation() and WritCreater.savedVars.exitWhenDone then SCENE_MANAGER:ShowBaseScene() end
 	closeOnce = false
@@ -594,12 +596,13 @@ local function createMatRequirementText(matsRequired)
 		text=text..WritCreater.strings.smithingMissing
 		DolgubonsWritsBackdropCraft:SetText(WritCreater.strings.craftAnyway)
 	end
-	out(text)	
+	out(text)
+
 end
 
 crafting = function(info,quest, craftItems)
 	--if #queue>0 then return end
-
+	DolgubonsWritsBackdropQuestOutput:SetText("")
 	out("If you see this, something is wrong.\nCopy the quest conditions, and send to Dolgubon\non esoui")
 	queue = {}
 
@@ -610,7 +613,7 @@ crafting = function(info,quest, craftItems)
 	local conditions  = setupConditionsTable(quest, info)
 
 	for i,value in pairs(conditions["text"]) do
-
+		
 		local pattern, index = conditions["pattern"][i], indexRanges[conditions["mats"][i]]
 		if pattern and index then
 
@@ -622,9 +625,6 @@ crafting = function(info,quest, craftItems)
 				out(WritCreater.strings.notEnoughSkill)
 				return
 			else
-
-			
-
 				if style == -1 then out(WritCreater.strings.moreStyle) return false end
 				
 				local needed = conditions["max"][i] - conditions["cur"][i]
@@ -648,6 +648,7 @@ crafting = function(info,quest, craftItems)
 							if changeRequired then return true end
 							addMats(info["names"][conditions["mats"][i]], -numMats ,matsRequired, conditions["pattern"][i], indexRanges[conditions["mats"][i]] )
 							createMatRequirementText(matsRequired)
+
 							return true
 							
 						else 
@@ -733,9 +734,13 @@ function findItem(item)
 	return nil, GetItemNameFromItemId(item)
 end
 
+function DolgubonsWritsBackdropQuestOutput.AddText(self,text)
+	self:SetText(self:GetText()..tostring(text))
+end
+
 local function enchantCrafting(info, quest,add)
 	out("")
-
+	DolgubonsWritsBackdropQuestOutput:SetText("")
 	ENCHANTING.potencySound = SOUNDS["NONE"]
 	ENCHANTING.potencyLength = 0
 	ENCHANTING.essenceSound = SOUNDS["NONE"]
@@ -768,6 +773,7 @@ local function enchantCrafting(info, quest,add)
 			conditions["text"][i] = false
 		elseif conditions["text"][i] =="" then
 		else
+			DolgubonsWritsBackdropQuestOutput:AddText(conditions["text"][i])
 			conditions["text"][i] = parser(conditions["text"][i])
 			DolgubonsWritsBackdropCraft:SetHidden(false)
 			DolgubonsWritsBackdropCraft:SetText(WritCreater.strings.craft)
