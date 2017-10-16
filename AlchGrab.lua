@@ -1,4 +1,4 @@
-﻿
+
 local function dbug(...)
 	DolgubonGlobalDebugOutput(...)
 end
@@ -59,6 +59,7 @@ end
 
 local function moveItem( amountRequired, bag, slot)
 	local emptySlot = emptySlots[1]
+
 	if emptySlot then
 		table.remove(emptySlots,1)
 		if IsProtectedFunction("RequestMoveItem") then
