@@ -770,7 +770,7 @@ local function enchantCrafting(info, quest,add)
 	for i = 1, numConditions do
 		conditions["text"][i], conditions["cur"][i], conditions["max"][i],a,conditions["complete"][i] = GetJournalQuestConditionInfo(quest, 1, i)
 		conditions["text"][i] = WritCreater.enchantExceptions(conditions["text"][i])
-		if conditions["cur"][i]>0 then conditions["text"][i] = ""  d("nilling")end
+		if conditions["cur"][i]>0 then conditions["text"][i] = "" end
 
 		if string.find(myLower(conditions["text"][i]),"deliver") then
 			out(WritCreater.strings.complete)
