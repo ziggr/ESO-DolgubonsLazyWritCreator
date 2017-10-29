@@ -28,6 +28,7 @@ local widgetType = 'smithing'
 local widgetVersion = 1
 if not LibLazyCrafting:RegisterWidget(widgetType, widgetVersion) then return  end
 
+local SetIndexes
 
 local sortCraftQueue = LibLazyCrafting.sortCraftQueue
 SetIndexes ={}
@@ -656,7 +657,7 @@ LibLazyCrafting.craftInteractionTables[CRAFTING_TYPE_CLOTHIER]["materialRequirem
 
 -- For brevity sake, sets are simply listed as 3 item IDs with the number of traits needed.	
 -- The name of the set is then added in on initialization using the API.
-local SetIndexes =
+SetIndexes =
 {		--   Axe,  Robe,     Bow
 	{{43529  , 43549 , [6] = 43543  },0},
 	{{46499  , 43805 , [6] = 46518  },2},
