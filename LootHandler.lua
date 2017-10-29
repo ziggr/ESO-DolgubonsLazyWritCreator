@@ -288,11 +288,11 @@ end
 
 local originalLoot = LootItemById
 function LootItemById(id)
-	d(id)
+	--d(id)
 	originalLoot(id)
 end
 local originalLootAll = LootAll
 function LootAll(id)
-	d("loot all")
+	--d("loot all")
 	originalLootAll()
 end
