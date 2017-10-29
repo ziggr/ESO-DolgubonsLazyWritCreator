@@ -220,3 +220,6 @@ SLASH_COMMANDS['/dlwcdebug'] = activateDebug
 SLASH_COMMANDS['/abandonwrits'] = abandonWrits
 	-- Outputs all the writ journal quest IDs. Mainly a debug function
 SLASH_COMMANDS['/dlwcfindwrit'] = findWrits
+
+
+
