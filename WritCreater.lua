@@ -524,7 +524,9 @@ local function writCompleteUIHandle()
 	DolgubonsWritsBackdropCraft:SetHidden(true)
 end
 local function craftNextQueueItem(calledFromCrafting)
-	
+	matSaver = matSaver + 1
+	if matSaver > 13 then return end
+	if  WritCreater.savedVars.tutorial then return end
 	if (not IsPerformingCraftProcess()) and (craftingWrits or WritCreater.savedVars.autoCraft ) then
 
 		if queue[1] then
@@ -951,6 +953,7 @@ end
 
 
 local function closeWindow(event, station)
+	matSaver = 0
 	DolgubonsWritsFeedback:SetHidden(true)
 	DolgubonsWrits:SetHidden(true)
 	craftingWrits = false

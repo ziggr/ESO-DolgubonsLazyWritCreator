@@ -23,6 +23,12 @@
  --   user:/AddOns/DolgubonsLazySetCrafter/Libs/LibLazyCrafting/LibLazyCrafting.lua:523: in function 'CraftInteract'
 
 local LibLazyCrafting = LibStub("LibLazyCrafting")
+
+local widgetType = 'smithing'
+local widgetVersion = 1
+if not LibLazyCrafting:RegisterWidget(widgetType, widgetVersion) then return false end
+
+
 local sortCraftQueue = LibLazyCrafting.sortCraftQueue
 SetIndexes ={}
 local abc = 1
@@ -650,7 +656,7 @@ LibLazyCrafting.craftInteractionTables[CRAFTING_TYPE_CLOTHIER]["materialRequirem
 
 -- For brevity sake, sets are simply listed as 3 item IDs with the number of traits needed.	
 -- The name of the set is then added in on initialization using the API.
-SetIndexes =
+local SetIndexes =
 {		--   Axe,  Robe,     Bow
 	{{43529  , 43549 , [6] = 43543  },0},
 	{{46499  , 43805 , [6] = 46518  },2},
@@ -702,17 +708,18 @@ SetIndexes =
 
 for i = 1,#SetIndexes do 
 	local _, a = GetItemLinkSetInfo(getItemLinkFromItemId(SetIndexes[i][1][1]),false)
+
 	table.insert(SetIndexes[i],1,a)
 end
 
 
-function GetSetIndexes()
+function LibLazyCrafting.GetSetIndexes()
 
 	return SetIndexes
 end
 
 -- IDs for stuff like Sanded Ruby Ash, Iron Ingots, etc.
-MaterialitemIDTable = 
+local MaterialitemIDTable = 
 {
 	[CRAFTING_TYPE_BLACKSMITHING] = 
 	{
