@@ -724,7 +724,7 @@ local function formatName(text)
 end
 
 
-function findItem(item)
+local function findItem(item)
 
 	for i=0, GetBagSize(BAG_BANK) do
 		if GetItemId(BAG_BANK,i)==item  then
