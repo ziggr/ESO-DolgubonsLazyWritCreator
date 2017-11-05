@@ -336,14 +336,10 @@ local function SmithingMasterWrit(journalIndex, info, station, isArmour, materia
 	end
 	local style = smithingSearch(conditionStrings["style"], styles)
 	local _,setIndex = smithingSearch(conditionStrings["set"], GetSetIndexes())
-	local quality
-	if WritCreater.lang =="en" then
-		quality = smithingSearch(conditionStrings["quality"], {{"Epic",4},{"Legendary",5}}) --search quality
-	elseif WritCreater.lang=="de" then
-		quality = smithingSearch(conditionStrings["quality"], {{"episch",4},{"legendär",5}})
-	elseif WritCreater.lang =="fr" then
-		quality = smithingSearch(conditionStrings["quality"], {{"épique",4},{"légendaire",5}})
+	if masterWritQuality then
+		local quality = smithingSearch(conditionStrings["quality"],WritCreater.masterWritQuality()) --search quality
 	end
+
 
 	if foundAllRequirements(pattern, style, setIndex, trait, quality) then
 
@@ -394,16 +390,6 @@ end
 --/script for 1, 25 do if GetJournalQuestName(i) == "A Masterful Weapon" then d(i, GetJournalQuestConditionInfo(i,1,1))  end end
 --QuestID: 1
 
-local exceptions = 
-{
-	[CRAFTING_TYPE_WOODWORKING] = 
-	{
-		[2] = {['en'] = "shield",['de'] = "schild",['fr'] = "bouclier"},
-		[4] = {['en'] = "frost",['de'] = "schilden",['fr'] = "bouclier"},
-		[6] = {['en'] = "healing",['de'] = "schilden",['fr'] = "bouclier"},
-	},
-
-}
 
 function WritCreater.MasterWritsQuestAdded(event, journalIndex,name)
 
@@ -455,6 +441,7 @@ function WritCreater.MasterWritsQuestAdded(event, journalIndex,name)
 		elseif writType == CRAFTING_TYPE_PROVISIONING then
 		elseif writType == "shield" then
 			local info = {{"shield",2}}
+
 			if WritCreater.lang=="de" then info[1][1] ="schilden" end
 			if WritCreater.lang=="fr" then info[1][1] = "bouclier" end
 			SmithingMasterWrit(journalIndex, info, CRAFTING_TYPE_WOODWORKING, true, "Ruby Ash",journalIndex)

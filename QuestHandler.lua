@@ -10,10 +10,12 @@
 -- 
 -----------------------------------------------------------------------------------
 
+
 WritCreater = WritCreater or {}
 local completionStrings
 
 local function completeMasterWrit(eventCode, journalIndex)
+	if not WritCreater.savedVars.autoAccept then return end
 	if string.find(string.lower(GetJournalQuestName(journalIndex)),WritCreater.langMasterWritNames()["M"]) then
 		--d("complete")
 		CompleteQuest()
@@ -38,7 +40,7 @@ local function HandleQuestCompleteDialog(eventCode, journalIndex)
 	WritCreater.savedVarsAccountWide["rewards"][currentWritDialogue]["num"] = WritCreater.savedVarsAccountWide["rewards"][currentWritDialogue]["num"] + 1
 	WritCreater.savedVarsAccountWide["total"] = WritCreater.savedVarsAccountWide["total"] + 1
     -- Complete the writ quest
-    
+    if not WritCreater.savedVars.autoAccept then return end
 	CompleteQuest()
 
 end
@@ -72,7 +74,7 @@ local function handleMasterWritQuestOffered()
 
 	local a = {GetOfferedQuestInfo()}
 	-- If it is a Master Writ offering
-    if string.find(a[1], "Rolis Hlaalu") and a[2] == completionStrings.masterStart and not WritCreater.savedVars.preventMasterWritAccept then
+    if string.find(a[1], completionStrings["Rolis Hlaalu"]) and a[2] == completionStrings.masterStart and not WritCreater.savedVars.preventMasterWritAccept then
 
 		--d("Accept")
     	AcceptOfferedQuest()
@@ -86,13 +88,17 @@ local function HandleChatterBegin(eventCode, optionCount)
 	if not WritCreater.savedVars.autoAccept then return end
     -- Ignore interactions with no options
     if optionCount == 0 then return end
+
     for i = 1, optionCount do
 	    -- Get details of first option
+
 	    local optionString, optionType = GetChatterOption(i)
+
 	    -- If it is a writ quest option...
 	    if optionType == CHATTER_START_NEW_QUEST_BESTOWAL 
 	       and string.find(string.lower(optionString), string.lower(WritCreater.writNames["G"])) ~= nil 
 	    then
+
 	    	if isQuestTypeActive(optionString) then
 				-- Listen for the quest offering
 				EVENT_MANAGER:RegisterForEvent(WritCreater.name, EVENT_QUEST_OFFERED, HandleEventQuestOffered)
@@ -104,6 +110,7 @@ local function HandleChatterBegin(eventCode, optionCount)
 	    elseif optionType == CHATTER_START_ADVANCE_COMPLETABLE_QUEST_CONDITIONS
 	       and string.find(string.lower(optionString), string.lower(completionStrings.place)) ~= nil  
 	    then
+
 	        -- Listen for the quest complete dialog
 	        EVENT_MANAGER:RegisterForEvent(WritCreater.name, EVENT_QUEST_COMPLETE_DIALOG, HandleQuestCompleteDialog)
 	        -- Select the first option to complete the quest
@@ -119,7 +126,7 @@ local function HandleChatterBegin(eventCode, optionCount)
 	        EVENT_MANAGER:RegisterForEvent(WritCreater.name, EVENT_QUEST_COMPLETE_DIALOG, HandleQuestCompleteDialog)
 	        -- Select the first option to place goods and/or sign the manifest
 	        SelectChatterOption(1)
-	    elseif ZO_InteractWindowTargetAreaTitle:GetText() =="-Rolis Hlaalu-" then
+	    elseif ZO_InteractWindowTargetAreaTitle:GetText() =="-"..completionStrings["Rolis Hlaalu"].."-" then 
 
 		    if optionType == CHATTER_START_ADVANCE_COMPLETABLE_QUEST_CONDITIONS
 		       and string.find(string.lower(optionString), string.lower(completionStrings.masterPlace)) ~= nil  
@@ -148,6 +155,10 @@ end
 function WritCreater.InitializeQuestHandling()
 	EVENT_MANAGER:RegisterForEvent(WritCreater.name, EVENT_CHATTER_BEGIN, HandleChatterBegin)
 	completionStrings = WritCreater.writCompleteStrings()
+	local original = AcceptOfferedQuest
+	AcceptOfferedQuest = function()
+	if string.find(GetOfferedQuestInfo(), "Rolis Hlaalu") and WritCreater.savedVars.preventMasterWritAccept then 
+		d("Dolgubon's Lazy Writ Crafter has saved you from accidentally accepting a master writ! Go to the settings menu to disable this option.")  else original() end end
 end
 
 --/script JumpToSpecificHouse("@marcopolo184", 46)

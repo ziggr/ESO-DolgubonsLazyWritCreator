@@ -10,6 +10,34 @@
 -- 
 -----------------------------------------------------------------------------------
 
+function WritCreater.langParser(str)
+	local seperater  = ":"
+	str = string.gsub(str,"の",":")
+	str = string.gsub(str,"を",":")
+	str = string.gsub(str,"な",":")
+	str = string.gsub(str, "（ノーマル）","")
+
+	local params = {}
+	local i = 1
+	local searchResult1, searchResult2  = string.find(str,seperater)
+	if searchResult1 == 1 then
+		str = string.sub(str, searchResult2+1)
+		searchResult1, searchResult2  = string.find(str,seperater)
+	end
+
+	while searchResult1 do
+
+		params[i] = string.sub(str, 1, searchResult1-1)
+		str = string.sub(str, searchResult2+1)
+	    searchResult1, searchResult2  = string.find(str,seperater)
+	    i=i+1
+	end 
+	params[i] = str
+	return params
+
+end
+
+
 function WritCreater.langWritNames() --Exacts!!!  I know for german alchemy writ is Alchemistenschrieb - so ["G"] = schrieb, and ["A"]=Alchemisten
 	local names = {
 	["G"] = "令状",
@@ -26,7 +54,11 @@ end
 function WritCreater.writCompleteStrings()
 	local strings = {
 	["place"] = "Place the goods",
-	["sing"] = "Sign the Manifest",
+	["sign"] = "Sign the Manifest",
+	["masterPlace"] = "",
+	["masterSign"] = "",
+	["masterStart"] = "<契約を受諾する>",,
+	["Rolis Hlaalu"] = "ロリス・フラール",
 	}
 	return strings
 end
@@ -477,12 +509,7 @@ WritCreater.optionStrings["woodworking"]                              = "木工"
 WritCreater.optionStrings["woodworking tooltip"]                      = "木工のアドオンをオフにする"
 WritCreater.optionStrings["writ grabbing"]                            = "令状アイテムを取り込む"
 WritCreater.optionStrings["writ grabbing tooltip"]                    = "令状に必要なアイテム（ニルンルート、ターなど）銀行から取り込みます"
-WritCreater.optionStrings["delay"]                                    = "アイテム取り込み遅延"
-WritCreater.optionStrings["delay tooltip"]                            = "銀行からアイテムを取り込む前に待機する時間（ミリ秒）"
-WritCreater.optionStrings["ignore autoloot"]                          = "自動取得設定を無視にする"
-WritCreater.optionStrings["ignore autoloot tooltip"]                  = "ゲームプレイメニューの自動取得設定を無視にし、令状報酬の箱について以下のカスタム設定を使用する"
-WritCreater.optionStrings["autoloot containters"]                     = "令状報酬の箱の自動取得"
-WritCreater.optionStrings["autoLoot containters tooltip"]             = "令状報酬の箱を開けた時に中身を取得する"
+
 WritCreater.optionStrings["style stone menu"]                         = "使用するスタイルストーン"
 WritCreater.optionStrings["style stone menu tooltip"]                 = "アドオンでどのスタイルストーンを使用するか選択する"
 WritCreater.optionStrings["exit when done"]							  = "Exit crafting window"
@@ -499,12 +526,15 @@ WritCreater.optionStrings["crafting submenu"]						  = "Trades to Craft"
 WritCreater.optionStrings["crafting submenu tooltip"]				  = "Turn the addon off for specific crafts"
 WritCreater.optionStrings["timesavers submenu"]						  = "Timesavers"
 WritCreater.optionStrings["timesavers submenu tooltip"]				  = "Various small timesavers"
-WritCreater.optionStrings["loot container"]						  = "Loot container when received"
-WritCreater.optionStrings["loot container tooltip"]				  = "Loot writ reward containers when you receive them"
+WritCreater.optionStrings["loot container"]						  		= "Loot container when received"
+WritCreater.optionStrings["loot container tooltip"]				  		= "Loot writ reward containers when you receive them"
 WritCreater.optionStrings["master writ saver"]							= "Save Master Writs"
 WritCreater.optionStrings["master writ saver tooltip"]					= "Prevents Master Writs from being accepted"
 WritCreater.optionStrings["loot output"]								= "Valuable Reward Alert"
 WritCreater.optionStrings["loot output tooltip"]						= "Output a message when valuable items are received from a writ"
+WritCreater.optionStrings["autoloot"]									= "Autoloot Behaviour"
+WritCreater.optionStrings["autoloot tooltip"]							= "Choose when the addon will autoloot writ reward containers"
+WritCreater.optionStrings["autoloot choices"]							= {"Copy the setting under the Gameplay settings", "Autoloot", "Never Autoloot"}
 
 function WritCreater.langWritRewardBoxes () 
 local WritRewardNames = { -- these are the containers you receive as writ rewards

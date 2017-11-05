@@ -9,7 +9,7 @@
 -- File Name: Provisioning.lua
 -- File Description: Contains the functions for Provisioning
 -- Load Order Requirements: After LibLazyCrafting.lua
--- 
+--
 -----------------------------------------------------------------------------------
 
 
@@ -19,13 +19,15 @@ local LibLazyCrafting = LibStub("LibLazyCrafting")
 local sortCraftQueue = LibLazyCrafting.sortCraftQueue
 
 local widgetType = 'provisioning'
-local widgetVersion = 1
+local widgetVersion = 1.1
 if not LibLazyCrafting:RegisterWidget(widgetType, widgetVersion) then return false end
 
 local function dbug(...)
     if not DolgubonGlobalDebugOutput then return end
     DolgubonGlobalDebugOutput(...)
 end
+
+local craftingQueue = LibLazyCrafting.craftingQueue
 
 local function toRecipeLink(recipeId)
     return string.format("|H1:item:%s:3:1:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0|h|h", tostring(recipeId))
@@ -80,7 +82,7 @@ local function LLC_ProvisioningCraftInteraction(event, station)
     currentCraftAttempt.position = position
     currentCraftAttempt.timestamp = GetTimeStamp()
     currentCraftAttempt.addon = addon
-    currentCraftAttempt.prevSlots = LibLazyCrafting.findSlotsContaining(currentCraftAttempt.link)
+    currentCraftAttempt.prevSlots = LibLazyCrafting.backpackInventory()
 end
 
 local function LLC_ProvisioningCraftingComplete(event, station, lastCheck)
