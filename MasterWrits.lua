@@ -295,7 +295,7 @@ end
 
 local function SmithingMasterWrit(journalIndex, info, station, isArmour, material, reference, sealedText)
 	dbug("FUNCTION:SmithingMasterHandler")
-
+	if not masterWritQuality then return end
 	if WritCreater.lang == "de" then for i = 1, #info do  info[i][1] = germanRemoveEN(info[i][1])   end end
 	local condition, complete =GetJournalQuestConditionInfo(journalIndex, 1)
 	local isQuest = true
@@ -336,9 +336,9 @@ local function SmithingMasterWrit(journalIndex, info, station, isArmour, materia
 	end
 	local style = smithingSearch(conditionStrings["style"], styles)
 	local _,setIndex = smithingSearch(conditionStrings["set"], GetSetIndexes())
-	if masterWritQuality then
-		local quality = smithingSearch(conditionStrings["quality"],WritCreater.masterWritQuality()) --search quality
-	end
+	
+	local quality = smithingSearch(conditionStrings["quality"],WritCreater.masterWritQuality()) --search quality
+
 
 
 	if foundAllRequirements(pattern, style, setIndex, trait, quality) then
