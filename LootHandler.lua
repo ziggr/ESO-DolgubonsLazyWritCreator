@@ -180,6 +180,7 @@ sceneDefault()
 local calledFromQuest = false
 
 local function OnLootUpdated(event)
+
 	local ignoreAuto = WritCreater.savedVars.ignoreAuto
 	local autoLoot 
 	if WritCreater.savedVars.ignoreAuto then
@@ -191,9 +192,16 @@ local function OnLootUpdated(event)
 	if autoLoot then
 		local lootInfo = {GetLootTargetInfo()}
 		local writRewardNames = WritCreater.langWritRewardBoxes ()
-		for i = 1, 7 do
+		for i = 1, #writRewardNames  do
 			local a, b = string.find(lootInfo[1], writRewardNames[i])
-			if a then				
+			if a then
+
+				if i == 7 then 
+					local itemType = GetItemLinkItemType(GetLootItemLink(GetLootItemInfo(1),1))
+					if not (itemType == 36 or itemType == 38 or itemType == 40) then
+						return
+					end
+				end
 				--LOOT_SHARED:LootAllItems()
 				local n = SCENE_MANAGER:GetCurrentScene().name
 
