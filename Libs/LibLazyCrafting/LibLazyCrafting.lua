@@ -475,7 +475,7 @@ function LibLazyCrafting:Init()
 
 		local station = GetCraftingInteractionType()
 		if station == 0 then d("You must be at a crafting station") return end
-		d(craftingQueue[station][1])
+
 		if canCraftItemHere(station, craftingQueue[station][1]["setIndex"]) and not IsPerformingCraftProcess() then
 			local craftThis = craftingQueue[station][1]
 			if not craftThis then d("Nothing queued") return end
@@ -531,6 +531,7 @@ local function CraftInteract(event, station)
 
 	for k,v in pairs(LibLazyCrafting.craftInteractionTables) do
 		if v["check"](station) then
+			
 			v["function"](station)
 		end
 	end
@@ -554,23 +555,28 @@ end
 -- which bypasses the event Manager, so that it is called first.
 
 local function CraftComplete(event, station)
-	LibLazyCrafting.isCurrentlyCrafting = {false, "", ""}
+	
 	--d("Event:completion")
 	local LLCResult = nil
 	for k,v in pairs(LibLazyCrafting.craftInteractionTables) do
 		if v["check"](station) then
 			if GetCraftingInteractionType()==0 then
 				--d("Calling exit complete, why???")
+			
 				endInteraction(EVENT_END_CRAFTING_STATION_INTERACT, station)
-				zo_callLater(function() v["complete"](station) end, timetest)
+				zo_callLater(function() v["complete"](station) LibLazyCrafting.isCurrentlyCrafting = {false, "", ""} end, timetest)
 			else
 				--d("calling complete")
 				if WritCrafter and WritCrafter.savedVarsAccountWide.masterDebugDelay then
 					zo_callLater(function()
 					v["complete"](station)
+
+					LibLazyCrafting.isCurrentlyCrafting = {false, "", ""}
 					v["function"](station) end, 500)
 				else
+
 					v["complete"](station)
+					LibLazyCrafting.isCurrentlyCrafting = {false, "", ""}
 					v["function"](station)
 				end
 			end

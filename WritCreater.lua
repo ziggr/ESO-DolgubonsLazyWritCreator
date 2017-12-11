@@ -960,7 +960,7 @@ local function closeWindow(event, station)
 	queue = {}
 	DolgubonsWritsBackdropCraft:SetHidden(false)
 	closeOnce = false
-	
+	WritCreater.LLCInteraction:cancelItem()
 end
 
 local function initializeUI()

@@ -25,10 +25,11 @@
 local LibLazyCrafting = LibStub("LibLazyCrafting")
 
 local widgetType = 'smithing'
-local widgetVersion = 1.1
+local widgetVersion = 1.2
 if not LibLazyCrafting:RegisterWidget(widgetType, widgetVersion) then return  end
 
 local function dbug(...)
+
 	if DolgubonGlobalDebugOutput then
 		DolgubonGlobalDebugOutput(...)
 	end
@@ -364,7 +365,7 @@ local function LLC_CraftSmithingItem(self, patternIndex, materialIndex, material
 	})
 
 	sortCraftQueue()
-	if not IsPerformingCraftProcess() and GetCraftingInteractionType()~=0 then  
+	if not IsPerformingCraftProcess() and GetCraftingInteractionType()~=0 then
 		LibLazyCrafting.craftInteractionTables[GetCraftingInteractionType()]["function"](GetCraftingInteractionType()) 
 	end
 end
@@ -447,8 +448,15 @@ local currentCraftAttempt =
 -------------------------------------------------------
 -- SMITHING INTERACTION FUNCTIONS
 
+a = 0
+
+local hasNewItemBeenMade = false
+
 local function LLC_SmithingCraftInteraction( station)
+	a = a + 1
+
 	dbug("EVENT:CraftIntBegin")
+
 	--abc = abc + 1 if abc>50 then d("raft")return end
 
 	local earliest, addon , position = LibLazyCrafting.findEarliestRequest(station)
@@ -470,13 +478,17 @@ local function LLC_SmithingCraftInteraction( station)
 			parameters[1] = parameters[1] + setPatternOffset[station]	
 		end
 			dbug("CALL:ZOCraftSmithing")
+
 			LibLazyCrafting.isCurrentlyCrafting = {true, "smithing", earliest["Requester"]}
+
+			hasNewItemBeenMade = false 
 			CraftSmithingItem(unpack(parameters))
 
 			currentCraftAttempt = copy(earliest)
 			currentCraftAttempt.position = position
 			currentCraftAttempt.callback = LibLazyCrafting.craftResultFunctions[addon]
 			currentCraftAttempt.slot = FindFirstEmptySlotInBag(BAG_BACKPACK)
+
 			currentCraftAttempt.timestamp = GetTimeStamp()
 			table.remove(parameters,6 )
 
@@ -523,6 +535,7 @@ local function LLC_SmithingCraftInteraction( station)
 			--ImproveSmithingItem(number itemToImproveBagId, number itemToImproveSlotIndex, number numBoostersToUse)
 			--GetSmithingImprovedItemLink(number itemToImproveBagId, number itemToImproveSlotIndex, number TradeskillType craftingSkillType, number LinkStyle linkStyle)
 	end
+	
 end
 -- check ItemID and style
 
@@ -565,7 +578,7 @@ end
 local backupPosition
 
 local function smithingCompleteNewItemHandler(station)
-	
+
 	dbug("ACTION:RemoveRequest")
 	
 	--d("Item found")
@@ -583,24 +596,35 @@ local function smithingCompleteNewItemHandler(station)
 	end
 end
 
+
+
 local function SmithingCraftCompleteFunction(station)
 	dbug("EVENT:CraftComplete")
+
 	--d("complete at "..GetTimeStamp())
-	if currentCraftAttempt.type == "smithing" then
+	--d(GetItemLink(BAG_BACKPACK, currentCraftAttempt.slot))
+
+	if currentCraftAttempt.type == "smithing" and hasNewItemBeenMade then 
+		hasNewItemBeenMade = false
 		if WasItemCrafted() then
-			
+
 			smithingCompleteNewItemHandler(station)
 		else
+
 			if backupPosition then
 				currentCraftAttempt.slot = backupPosition
 				if WasItemCrafted() then
+
 					smithingCompleteNewItemHandler(station)
+				else
+
 				end
 			end
 		end
 		currentCraftAttempt = {}
 		sortCraftQueue()
 		backupPosition = nil
+		
 	elseif currentCraftAttempt.type == "improvement" then
 
 		if WasItemImproved(currentCraftAttempt) then
@@ -613,7 +637,6 @@ local function SmithingCraftCompleteFunction(station)
 		sortCraftQueue()
 		backupPosition = nil
 	else
-
 		return
 	end
 end
@@ -621,8 +644,16 @@ end
 local function slotUpdateHandler(event, bag, slot, isNew, itemSoundCategory, inventoryUpdateReason, stackCountChange)
 
 	if not isNew then return end
+
+
 	if stackCountChange ~= 1 then return end
-	if LibLazyCrafting.IsPerformingCraftProcess() then
+	local itemType = GetItemType(bag, slot)
+	if itemType ==ITEMTYPE_ARMOR or itemType ==ITEMTYPE_WEAPON then else return end 
+	hasNewItemBeenMade = true
+	if LibLazyCrafting.IsPerformingCraftProcess() and ( currentCraftAttempt.slot ~= slot or not currentCraftAttempt.slot ) then
+		backupPosition = slot
+	end
+	if currentCraftAttempt.slot ~= slot or not currentCraftAttempt.slot  then
 		backupPosition = slot
 	end
 end
@@ -675,7 +706,6 @@ LibLazyCrafting.craftInteractionTables[CRAFTING_TYPE_WOODWORKING]["materialRequi
 LibLazyCrafting.craftInteractionTables[CRAFTING_TYPE_CLOTHIER] = copy(LibLazyCrafting.craftInteractionTables[CRAFTING_TYPE_BLACKSMITHING])
 LibLazyCrafting.craftInteractionTables[CRAFTING_TYPE_CLOTHIER]["check"] = function(station) return station == CRAFTING_TYPE_CLOTHIER end 
 LibLazyCrafting.craftInteractionTables[CRAFTING_TYPE_CLOTHIER]["materialRequirements"] = function(request) return compileRequirements(CRAFTING_TYPE_CLOTHIER) end 
-
 
 
 -- First is the name of the set. Second is a table of sample itemIds. Third is the number of required traits.
@@ -800,3 +830,4 @@ local improvementChances =
 	[3] = {3,4,5,10},
 	[4] = {2,3,4,8},
 }
+
