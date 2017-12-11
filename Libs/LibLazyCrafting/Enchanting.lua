@@ -15,7 +15,7 @@ local LibLazyCrafting = LibStub("LibLazyCrafting")
 local sortCraftQueue = LibLazyCrafting.sortCraftQueue
 
 local widgetType = 'enchanting'
-local widgetVersion = 1
+local widgetVersion = 1.1
 if not LibLazyCrafting:RegisterWidget(widgetType, widgetVersion) then return false end
 
 local function dbug(...)
@@ -119,6 +119,7 @@ local function LLC_EnchantingCraftinteraction(event, station)
 		}
 		if locations[1] and locations[5] and locations[3] then
 			dbug("CALL:ZOEnchantCraft")
+			LibLazyCrafting.isCurrentlyCrafting = {true, "enchanting", earliest["Requester"]}
 			CraftEnchantingItem(unpack(locations))
 			
 			currentCraftAttempt= copy(earliest)
