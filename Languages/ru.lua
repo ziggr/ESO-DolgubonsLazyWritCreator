@@ -46,6 +46,7 @@ function WritCreater.writCompleteStrings()
 	["masterPlace"] = "Я закончил",
 	["masterSign"] = "<Закончить работу.>",
 	["masterStart"] = "<Принять заказ.>",
+	["Rolis Hlaalu"] = "Ролис Хлаалу",
 	}
 	return strings
 end
