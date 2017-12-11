@@ -597,6 +597,8 @@ WritCreater.optionStrings["writ grabbing tooltip"]						= "Entnimmt Gegenstände
 WritCreater.optionStrings["autoloot behaviour"]							= "Autoloot-Verhalten"
 WritCreater.optionStrings["autoloot behaviour tooltip"]					= "Wann soll das Add-On Container looten"
 WritCreater.optionStrings["autoloot behaviour choices"]					= {"Gameplay-Einstellung kopieren", "Automatisch looten", "Nie looten"}
+WritCreater.optionStrings["container delay"]							= "Delay Container Looting"
+WritCreater.optionStrings["container delay tooltip"]					= "Delay the autolooting of writ reward containers when you receive them"
 
 
 --"<<1>> erhalten"

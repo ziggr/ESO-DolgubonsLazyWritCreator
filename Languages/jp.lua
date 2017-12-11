@@ -37,14 +37,10 @@ function WritCreater.langParser(str)
 
 end
 
-function WritCreater.langParser(str)
-	local _, _, level, pattern, _ = string.find(str, "(.-)の(.-)%((.+)%)を生産する")
-	return { level, pattern }
-end
 
 function WritCreater.langWritNames() --Exacts!!!  I know for german alchemy writ is Alchemistenschrieb - so ["G"] = schrieb, and ["A"]=Alchemisten
 	local names = {
-	["G"] = "令状",
+	["G"] = "依頼を調べる",
 	[CRAFTING_TYPE_ENCHANTING] = "付呪",
 	[CRAFTING_TYPE_BLACKSMITHING] = "鍛冶",
 	[CRAFTING_TYPE_CLOTHIER] = "仕立",
@@ -273,7 +269,7 @@ local craftInfo =
 
 end
 
-function WritCreater.langEssenceNames() --exact!
+function WritCreater.langEssenceNames() --Vital!
 
 local essenceNames =  
 	{
@@ -284,7 +280,7 @@ local essenceNames =
 	return essenceNames
 end
 
-function WritCreater.langPotencyNames() --exact!! Also, these are all the positive runestones - no negatives needed.
+function WritCreater.langPotencyNames() --Vital!! Also, these are all the positive runestones - no negatives needed.
 	local potencyNames = 
 	{
 		[1] = "ジョラ", --Lowest potency stone lvl
@@ -556,9 +552,11 @@ WritCreater.optionStrings["master writ saver"]							= "マスター依頼を保
 WritCreater.optionStrings["master writ saver tooltip"]					= "マスター依頼を誤って受諾できないようにする"
 WritCreater.optionStrings["loot output"]								= "価値の高い報酬を受けた時の通知"
 WritCreater.optionStrings["loot output tooltip"]						= "クラフト依頼完了の報酬として、価値の高いアイテムを受けた場合通知する"
-WritCreater.optionStrings["autoloot behaviour"]							= "Autoloot Behaviour"
-WritCreater.optionStrings["autoloot behaviour tooltip"]					= "Choose when the addon will autoloot writ reward containers"
-WritCreater.optionStrings["autoloot behaviour choices"]					= {"Copy the setting under the Gameplay settings", "Autoloot", "Never Autoloot"}
+WritCreater.optionStrings["autoloot behaviour"]							= "自動取得設定"
+WritCreater.optionStrings["autoloot behaviour tooltip"]					= "自動取得の詳細設定"
+WritCreater.optionStrings["autoloot behaviour choices"]					= {"ゲームプレイメニュー内の設定に従う", "自動的に取得する", "自動的に取得しない"}
+WritCreater.optionStrings["container delay"]							= "Delay Container Looting"
+WritCreater.optionStrings["container delay tooltip"]					= "Delay the autolooting of writ reward containers when you receive them"
 
 function WritCreater.langWritRewardBoxes () 
 local WritRewardNames = { -- these are the containers you receive as writ rewards
