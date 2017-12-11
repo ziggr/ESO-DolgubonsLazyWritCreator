@@ -104,7 +104,7 @@ local currentCraftAttempt =
 
 }
 
-timeGiven = 1800
+
 local function LLC_EnchantingCraftinteraction(event, station)
 	dbug("FUNCTION:LLCEnchantCraft")
 	local earliest, addon , position = LibLazyCrafting.findEarliestRequest(CRAFTING_TYPE_ENCHANTING)
@@ -136,7 +136,7 @@ local function LLC_EnchantingCraftinteraction(event, station)
 			ENCHANTING.essenceLength = 0
 			ENCHANTING.aspectSound = SOUNDS["NONE"]
 			ENCHANTING.aspectLength = 0
-			--zo_callLater(function() SCENE_MANAGER:ShowBaseScene() end, timeGiven)
+			
 		end
 	end
 end

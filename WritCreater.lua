@@ -764,10 +764,10 @@ local function enchantCrafting(info, quest,add)
 	}
 
 	for i = 1, numConditions do
-		conditions["text"][i], conditions["cur"][i], conditions["max"][i],a,conditions["complete"][i] = GetJournalQuestConditionInfo(quest, 1, i)
+
+		conditions["text"][i], conditions["cur"][i], conditions["max"][i],_,conditions["complete"][i] = GetJournalQuestConditionInfo(quest, 1, i)
 		conditions["text"][i] = WritCreater.enchantExceptions(conditions["text"][i])
 		if conditions["cur"][i]>0 then conditions["text"][i] = "" end
-
 		if string.find(myLower(conditions["text"][i]),"deliver") then
 			out(WritCreater.strings.complete)
 			if closeOnce and WritCreater.IsOkayToExitCraftStation() and WritCreater.savedVars.exitWhenDone then SCENE_MANAGER:ShowBaseScene()  end

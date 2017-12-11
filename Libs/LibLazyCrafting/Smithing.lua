@@ -448,13 +448,10 @@ local currentCraftAttempt =
 -------------------------------------------------------
 -- SMITHING INTERACTION FUNCTIONS
 
-a = 0
-
 local hasNewItemBeenMade = false
 
 local function LLC_SmithingCraftInteraction( station)
-	a = a + 1
-
+	
 	dbug("EVENT:CraftIntBegin")
 
 	--abc = abc + 1 if abc>50 then d("raft")return end

@@ -69,12 +69,6 @@ local qualityIndexes =
 }
 
 
-
---GetItemLinkSetInfo(string itemLink, boolean equipped)
---GetItemLinkInfo(string itemLink)
---GetItemId(number bagId, number slotIndex)
---|H1:item:72129:369:50:26845:370:50:0:0:0:0:0:0:0:0:0:15:1:1:0:17:0|h|h
-
 -- Crafting request Queue. Split by addon. Further split by station. Each request has a timestamp for when it was requested.
 -- Due to how requests are added, each addon's requests withing station should be sorted by oldest to newest. We'll assume that. (maybe check once in a while)
 -- Thus, all that's needed to find the oldest request is cycle through each addon, and check only their first request.
@@ -253,6 +247,7 @@ local function tableClear(t)
 	end
 end
 -- Common code called by Alchemy and Provisioning crafting complete handlers.
+
 function LibLazyCrafting.stackableCraftingComplete(event, station, lastCheck, craftingType, currentCraftAttempt)
 	dbug("EVENT:CraftComplete")
 	if not (currentCraftAttempt and currentCraftAttempt.addon) then return end
@@ -436,9 +431,7 @@ function LibLazyCrafting:Init()
 		-- Ensures that any request will have an addon name attached to it, if needed.
 		LLCAddonInteractionTable["addonName"] = addonName
 		-- The crafting queue is added. Consider hiding this.
-		-- Pro: It hides it, prevents addon people from messing with the queue. More OOP. Don't have to deal with devs messing other addons up
-		-- Cons: Prevents them from messing with it. Maybe no scroll menus! It's up to them if they want to manually add something, too.
-		-- But can easily add 'if type(timestamp) ~= number then ignore end.' On the other hand, addons can mess with the timestamps, and change priority
+
 		LLCAddonInteractionTable["personalQueue"]  = craftingQueue[addonName]
 
 		-- Add all the functions to the interaction table!!
@@ -463,12 +456,6 @@ function LibLazyCrafting:Init()
 	function LibLazyCrafting:IsPerformingCraftProcess()
 		return unpack(LibLazyCrafting.isCurrentlyCrafting)
 	end
-
-	-- Same as the normal crafting function, with a few extra parameters.
-	-- However, doesn't craft it, just adds it to the queue. (TODO: Maybe change this? But do we want auto craft?)
-	-- StationOverride
-	-- test: /script LLC_CraftSmithingItem(1, 1, 7, 2, 1, false, 1, 0, 0 )
-	-- test: /script LLC_CraftSmithingItem(1, 1, 7, 2, 1, false, 5, 0, 0)
 
 	-- Probably has to be completely rewritten TODO
 	function LLC_CraftQueue()
@@ -525,6 +512,8 @@ function LibLazyCrafting:Init()
 	--craftingQueue["ExampleAddon"] = nil
 end
 
+------------------------------------------------------
+-- CRAFT EVENT HANDLERS
 
 -- Called when a crafting station is opened. Should then craft anything needed in the queue
 local function CraftInteract(event, station)
@@ -560,35 +549,18 @@ local function CraftComplete(event, station)
 	local LLCResult = nil
 	for k,v in pairs(LibLazyCrafting.craftInteractionTables) do
 		if v["check"](station) then
-			if GetCraftingInteractionType()==0 then
-				--d("Calling exit complete, why???")
-			
+			if GetCraftingInteractionType()==0 then -- This is called when the user exits the crafting station while the game is crafting
+
 				endInteraction(EVENT_END_CRAFTING_STATION_INTERACT, station)
 				zo_callLater(function() v["complete"](station) LibLazyCrafting.isCurrentlyCrafting = {false, "", ""} end, timetest)
 			else
-				--d("calling complete")
-				if WritCrafter and WritCrafter.savedVarsAccountWide.masterDebugDelay then
-					zo_callLater(function()
-					v["complete"](station)
-
-					LibLazyCrafting.isCurrentlyCrafting = {false, "", ""}
-					v["function"](station) end, 500)
-				else
-
-					v["complete"](station)
-					LibLazyCrafting.isCurrentlyCrafting = {false, "", ""}
-					v["function"](station)
-				end
+				v["complete"](station)
+				LibLazyCrafting.isCurrentlyCrafting = {false, "", ""}
+				v["function"](station)
 			end
 		end
 	end
-	--for k, v in pairs(craftResultFunctions) do
-	--	v(event, station, LLCResult)
-	--end
 end
-
-
-
 
 local function OnAddonLoaded()
 	if not libLoaded then
@@ -603,34 +575,3 @@ local function OnAddonLoaded()
 end
 
 EVENT_MANAGER:RegisterForEvent(LIB_NAME, EVENT_ADD_ON_LOADED, OnAddonLoaded)
-
-
-
-
-
---[[
-function ActivityManager:QueueActivity(activity)
-    local queue, lookup = self.queue, self.lookup
-    local key = activity:GetKey()
-    if(lookup[key]) then return false end
-    queue[#queue + 1] = activity
-    lookup[key] = activity
-    table.sort(queue, ByPriority)
-    return true
-end
-
-function ActivityManager:RemoveActivity(activity)
-    self.lookup[activity:GetKey()] = nil
-    for i = 1, #self.queue do
-        if(self.queue[i]:GetKey() == activity:GetKey()) then
-            table.remove(self.queue, i)
-            break
-        end
-    end
-end
-
-
-
-
-
-]]
