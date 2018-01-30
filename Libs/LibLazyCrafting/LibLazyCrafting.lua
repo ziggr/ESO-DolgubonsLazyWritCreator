@@ -17,7 +17,7 @@ local function dbug(...)
 	--DolgubonDebugRunningDebugString(...)
 end
 local libLoaded
-local LIB_NAME, VERSION = "LibLazyCrafting", 1.6
+local LIB_NAME, VERSION = "LibLazyCrafting", 1.7
 local LibLazyCrafting, oldminor = LibStub:NewLibrary(LIB_NAME, VERSION)
 if not LibLazyCrafting then return end
 local LLC = LibLazyCrafting
@@ -29,10 +29,10 @@ LibLazyCrafting.craftInteractionTables =
 {
 	["example"] =
 	{
-		["check"] = function(station) if station == 123 then return false end end,
+		["check"] = function(self, station) if station == 123 then return false end end,
 		["function"] = function(station) --[[craftStuff()]] end,
 		["complete"] = function(station) --[[handleCraftCompletion()]] end,
-		["endInteract"] = function(station) --[[endInteraction()]] end,
+		["endInteract"] = function(self, station) --[[endInteraction()]] end,
 	}
 }
 
@@ -142,6 +142,7 @@ craftingQueue =
 		},
 	},
 }
+-- Remove the examples, don't want to actualy make them :D
 craftingQueue["ExampleAddon"] = nil
 
 LibLazyCrafting.craftingQueue = craftingQueue
@@ -166,8 +167,8 @@ function GetItemIDFromLink(itemLink) return tonumber(string.match(itemLink,"|H%d
 
 -- Mostly a queue function, but kind of a helper function too
 local function isItemCraftable(request, station)
-	if LibLazyCrafting.craftInteractionTables[station]["isItemCraftable"] then
-		return LibLazyCrafting.craftInteractionTables[station]["isItemCraftable"](station, request)
+	if LibLazyCrafting.craftInteractionTables[station].isItemCraftable then
+		return LibLazyCrafting.craftInteractionTables[station]:isItemCraftable(station, request)
 	end
 
 	if station ==CRAFTING_TYPE_ENCHANTING or station == CRAFTING_TYPE_PROVISIONING or station == CRAFTING_TYPE_ALCHEMY then
@@ -406,13 +407,13 @@ LibLazyCrafting.functionTable.craftItem = LLC_CraftItem
 LibLazyCrafting.functionTable.CraftAllItems = LLC_CraftAllItems
 LibLazyCrafting.functionTable.findItemByReference =  LLC_FindItemByReference
 
-local function LLC_GetMatRequirements(self, reference)
-	local requests = LLC_FindItemByReference(self, reference)
-	for i = 1, #requests do
-		LibLazyCrafting.craftInteractionTables[requests[i].station]["materialRequirements"](requests[i])
-	end
+local function LLC_GetMatRequirements(self, requestTable)
+
+	return LibLazyCrafting.craftInteractionTables[requestTable.station]:materialRequirements( requestTable)
 
 end
+
+LibLazyCrafting.functionTable.getMatRequirements =  LLC_GetMatRequirements
 
 function LibLazyCrafting:Init()
 
@@ -507,7 +508,7 @@ function LibLazyCrafting:Init()
 	LLC_INSUFFICIENT_SKILL  = "not enough skill" -- extra result: what skills are missing; both if not enough traits, not enough styles, or trait unknown
 
 	LLC_Global = LibLazyCrafting:AddRequestingAddon("LLC_Global",true, function(event, station, result)
-		d("1 "..GetItemLink(result.bag,result.slot).." crafted at slot "..tostring(result.slot).." with reference "..result.reference) end)
+		d(GetItemLink(result.bag,result.slot).." crafted at slot "..tostring(result.slot).." with reference "..result.reference) end)
 
 	--craftingQueue["ExampleAddon"] = nil
 end
@@ -519,23 +520,15 @@ end
 local function CraftInteract(event, station)
 
 	for k,v in pairs(LibLazyCrafting.craftInteractionTables) do
-		if v["check"](station) then
+		if v:check( station) then
 			
-			v["function"](station)
+			v["function"]( station)
 		end
 	end
 end
 
 LibLazyCrafting.craftInteract = CraftInteract
 
-local function endInteraction(event, station)
-	for k,v in pairs(LibLazyCrafting.craftInteractionTables) do
-		if v["check"](station) then
-			v["endInteraction"](station)
-
-		end
-	end
-end
 
 -- Called when a crafting request is done.
 -- Note that this function is called both when you finish crafting and when you leave the station
@@ -548,15 +541,15 @@ local function CraftComplete(event, station)
 	--d("Event:completion")
 	local LLCResult = nil
 	for k,v in pairs(LibLazyCrafting.craftInteractionTables) do
-		if v["check"](station) then
+		if v:check( station) then
 			if GetCraftingInteractionType()==0 then -- This is called when the user exits the crafting station while the game is crafting
 
-				endInteraction(EVENT_END_CRAFTING_STATION_INTERACT, station)
-				zo_callLater(function() v["complete"](station) LibLazyCrafting.isCurrentlyCrafting = {false, "", ""} end, timetest)
+				endInteraction(self, EVENT_END_CRAFTING_STATION_INTERACT, station)
+				zo_callLater(function() v["complete"]( station) LibLazyCrafting.isCurrentlyCrafting = {false, "", ""} end, timetest)
 			else
-				v["complete"](station)
+				v["complete"]( station)
 				LibLazyCrafting.isCurrentlyCrafting = {false, "", ""}
-				v["function"](station)
+				v["function"]( station)
 			end
 		end
 	end
@@ -570,7 +563,7 @@ local function OnAddonLoaded()
 		EVENT_MANAGER:UnregisterForEvent(LIB_NAME, EVENT_ADD_ON_LOADED)
 		EVENT_MANAGER:RegisterForEvent(LIB_NAME, EVENT_CRAFTING_STATION_INTERACT,CraftInteract)
 		EVENT_MANAGER:RegisterForEvent(LIB_NAME, EVENT_CRAFT_COMPLETED, CraftComplete)
-		--EVENT_MANAGER:RegisterForEvent(LIB_NAME, EVENT_END_CRAFTING_STATION_INTERACT, endInteraction)
+		
 	end
 end
 
