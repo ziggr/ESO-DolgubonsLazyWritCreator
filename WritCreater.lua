@@ -452,7 +452,7 @@ local function sendNote(gold)
     zo_callLater(function()
     ZO_MailSendToField:SetText('@Dolgubon')
     ZO_MailSendSubjectField:SetText("Dolgubon's Lazy Writ Crafter")
-    if gold and GetWorldName() == "NA Megaserver" then
+    if gold then
     	QueueMoneyAttachment(gold)
     end
     ZO_MailSendBodyField:TakeFocus() end, 200)
