@@ -17,7 +17,7 @@ local function dbug(...)
 	--DolgubonDebugRunningDebugString(...)
 end
 local libLoaded
-local LIB_NAME, VERSION = "LibLazyCrafting", 1.8
+local LIB_NAME, VERSION = "LibLazyCrafting", 1.9
 local LibLazyCrafting, oldminor = LibStub:NewLibrary(LIB_NAME, VERSION)
 if not LibLazyCrafting then return end
 local LLC = LibLazyCrafting
@@ -258,8 +258,8 @@ function LibLazyCrafting.stackableCraftingComplete(event, station, lastCheck, cr
 		dbug("RESULT:StackableMade")
 		if currentCraftAttempt["timesToMake"] < 2 then
 			dbug("ACTION:RemoveQueueItem")
-			craftingQueue[currentCraftAttempt.addon][craftingType][currentCraftAttempt.position] = nil
-			LibLazyCrafting.sortCraftQueue()
+			table.remove( craftingQueue[currentCraftAttempt.addon][craftingType] , currentCraftAttempt.position ) 
+			--LibLazyCrafting.sortCraftQueue()
 			local resultTable =
 			{
 				["bag"] = BAG_BACKPACK,
@@ -545,7 +545,6 @@ end
 
 -- Called when a crafting station is opened. Should then craft anything needed in the queue
 local function CraftInteract(event, station)
-
 	for k,v in pairs(LibLazyCrafting.craftInteractionTables) do
 		if v:check( station) then
 			
