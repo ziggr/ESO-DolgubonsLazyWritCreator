@@ -482,7 +482,7 @@ if shouldDivinityprotocolbeactivatednowornotitshouldbeallthetimebutwhateveritllj
 end
 
 --Options table Strings
-WritCreater.optionStrings = {}
+WritCreater.optionStrings = WritCreater.optionStrings or {}
 WritCreater.optionStrings["style tooltip"]                            	= function (styleName) return zo_strformat("Разрешить использовать стиль <<1>> для создания предметов",styleName) end 
 WritCreater.optionStrings["show craft window"]                        	= "Показать окно аддона"
 WritCreater.optionStrings["show craft window tooltip"]                	= "Показывать окно аддона при использовании ремесленных станков"

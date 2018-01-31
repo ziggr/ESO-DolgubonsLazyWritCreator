@@ -504,7 +504,7 @@ if shouldDivinityprotocolbeactivatednowornotitshouldbeallthetimebutwhateveritllj
 end
 
 --Options table Strings
-WritCreater.optionStrings = {}
+WritCreater.optionStrings = WritCreater.optionStrings or {}
 WritCreater.optionStrings["style tooltip"]								= function (styleName, styleStone) return zo_strformat("允许 <<1>> 样式, 将用到 <<2>> 样式石用于制造",styleName, styleStone) end 
 WritCreater.optionStrings["show craft window"]							= "显示制造窗口"
 WritCreater.optionStrings["show craft window tooltip"]					= "当打开工作台时显示制造窗口"
