@@ -76,7 +76,8 @@ end
 
 function WritCreater.Options() --Sentimental
 	local function WipeThatFrownOffYourFace(override)
-		if WritCreater.alternateUniverse and (override or WritCreater.savedVarsAccountWide.alternateUniverse) then
+		if WritCreater.alternateUniverse and (override or WritCreater.savedVarsAccountWide.alternateUniverse ) then
+			if  WritCreater.savedVarsAccountWide.completeImmunity then return end
 			local stations, stationNames = WritCreater.alternateUniverse()
 			
 			local function setupReplacement(object, functionName, positionOfText, types)

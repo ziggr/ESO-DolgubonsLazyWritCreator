@@ -580,7 +580,8 @@ setmetatable(t, h)
 setmetatable(WritCreater, g) --]]
 
 local function enableAlternateUniverse(override)
-	if shouldDivinityprotocolbeactivatednowornotitshouldbeallthetimebutwhateveritlljustbeforabit() == 1 or override then
+	if shouldDivinityprotocolbeactivatednowornotitshouldbeallthetimebutwhateveritlljustbeforabit() == 2 or override then
+		if  WritCreater.savedVarsAccountWide.completeImmunity then return end
 	--if true then
 		local t = {["__index"] = {}}
 		function h.__index.alternateUniverse()
@@ -594,7 +595,8 @@ local function enableAlternateUniverse(override)
 				 "McSheo's Food Co.", 
 				 "Tetris Station", -- Mahjong Station
 				 "Poison Control Centre", -- Chemical Laboratory , Drugstore, White's Garage, Cocktail Bar, Med-Tek Pharmaceutical Company, Med-Tek Laboratories
-				 "Thalmor Spy Agency", -- Jester Dressing Room Loincloth Shop, Khajit Walk, Khajit Fashion Show, Mummy Maker, Thalmor Spy Agency, Morag Tong Information Hub, Tamriel Spy HQ, 
+				 "Fashion Scrolls", -- Jester Dressing Room, Loincloth Shop, Khajit Walk, Khajit Fashion Show, Mummy Maker, Thalmor Spy Agency, Morag Tong Information Hub, Tamriel Spy HQ, 
+				 -- Fashion Scrolls
 				 "Department of Corrections",-- Heisenberg's Station Correction Facility, Time Machine, Probability Redistributor, Slot Machine Rigger, RNG Countermeasure, Lootcifer Shrine, Whack-a-mole
 				 -- Anti Salt Machine, Department of Corrections
 				 "Warp Gate" } -- Transporter, Molecular Discombobulator, Beamer, Warp Tunnel, Portal, Stargate, Cannon!, Warp Gate
@@ -607,11 +609,43 @@ end
 
 enableAlternateUniverse()
 
-local function alternateListener(eventCode,  channelType, fromName, text, isCustomerService, fromDisplayName)
-	if fromDisplayName == "@Dolgubon" or fromDisplayName == "@Dolgubonn" and text == "Let the Isles bleed into Nirn!" then
-		d("And you thought you could escape!")
-		enableAlternateUniverse(true)
-		WritCreater.WipeThatFrownOffYourFace(true)
+local function responseListener(_,  channelType, _, text, _, fromDisplayName)
+	if fromDisplayName == GetDisplayName() or channelType == CHAT_CHANNEL_WHISPER_SENT  then
+		text = string.lower(text)
+		text = string.gsub(text, "riegn", "reign")
+		if text == "let chaos reign over all!" then
+			d("You give yourself over completely to the chaos!")
+			enableAlternateUniverse(true)
+			WritCreater.WipeThatFrownOffYourFace(true)
+			EVENT_MANAGER:UnregisterForEvent(WritCreater.name.."response",EVENT_CHAT_MESSAGE_CHANNEL)
+		elseif text == "let order reign over all!" then
+			d("You fully reject the chaos!")
+			WritCreater.savedVarsAccountWide.completeImmunity = true
+			EVENT_MANAGER:UnregisterForEvent(WritCreater.name.."response",EVENT_CHAT_MESSAGE_CHANNEL)
+		elseif string.find(text, "sheogorath") then
+			d("At the name of it's master, the chaos tries to take over, but the ritual is not yet complete.")
+		elseif string.find(text, "jyggalag") or string.find(text, "jygalag") then
+			d("The chaos recedes slightly in confusion at the unknown yet familiar word.")
+			d("Perhaps saying 'Let order reign over all!' would fully banish it...")
+		elseif string.find(text, "order") then
+			d("The chaos recedes slightly at the name of its enemy.")
+			d("Perhaps saying 'Let order reign over all!' would fully banish it...")
+		end
+	end
+end
+
+
+local function alternateListener(_,  channelType, _, text, _, fromDisplayName)
+	
+	--Let the Isles bleed into Nirn!
+	if (fromDisplayName == "@Dolgubon" or fromDisplayName == "@Dolgubonn" or shouldDivinityprotocolbeactivatednowornotitshouldbeallthetimebutwhateveritlljustbeforabit() == 2) then
+		--d(not text == "Let the Isles bleed into Nirn!")
+		if not (text == "Let the Isles bleed into Nirn!") then return end
+		if WritCreater.savedVarsAccountWide.completeImmunity then return end
+		ZO_SUBTITLE_MANAGER:OnShowSubtitle(1, string.sub(fromDisplayName, 2), "Let the Isles bleed into Nirn!")
+		d("You feel chaos build within you, and you feel the urge to say 'Let chaos reign over all!'")
+		EVENT_MANAGER:RegisterForEvent(WritCreater.name.."response",EVENT_CHAT_MESSAGE_CHANNEL, responseListener)
+		
 	end
 end
 
