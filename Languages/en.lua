@@ -613,22 +613,25 @@ local function responseListener(_,  channelType, _, text, _, fromDisplayName)
 	if fromDisplayName == GetDisplayName() or channelType == CHAT_CHANNEL_WHISPER_SENT  then
 		text = string.lower(text)
 		text = string.gsub(text, "riegn", "reign")
-		if text == "let chaos reign over all!" then
-			d("You give yourself over completely to the chaos!")
+		text = string.gsub(text, "!","")
+		if text == "let madness reign over all" then
+			d("You give yourself over completely to the madness! Maybe you should also ask the Isles to bleed into Nirn")
 			enableAlternateUniverse(true)
 			WritCreater.WipeThatFrownOffYourFace(true)
 			EVENT_MANAGER:UnregisterForEvent(WritCreater.name.."response",EVENT_CHAT_MESSAGE_CHANNEL)
-		elseif text == "let order reign over all!" then
-			d("You fully reject the chaos!")
+		elseif text == "let order reign over all" then
+			d("You fully reject the madness!")
 			WritCreater.savedVarsAccountWide.completeImmunity = true
 			EVENT_MANAGER:UnregisterForEvent(WritCreater.name.."response",EVENT_CHAT_MESSAGE_CHANNEL)
-		elseif string.find(text, "sheogorath") then
-			d("At the name of it's master, the chaos tries to take over, but the ritual is not yet complete.")
+		elseif string.find(text, "cheese") then
+			d("The feeling inside you seems to lick its lips")
+		elseif string.find(text, "sheogorath") or string.find(text, "sheo") then
+			d("At the name of it's master, the madness tries to take over, but the ritual is not yet complete.")
 		elseif string.find(text, "jyggalag") or string.find(text, "jygalag") then
-			d("The chaos recedes slightly in confusion at the unknown yet familiar word.")
+			d("The madness recedes slightly in confusion at the unknown yet familiar word.")
 			d("Perhaps saying 'Let order reign over all!' would fully banish it...")
 		elseif string.find(text, "order") then
-			d("The chaos recedes slightly at the name of its enemy.")
+			d("The madness recedes slightly at the name of its enemy.")
 			d("Perhaps saying 'Let order reign over all!' would fully banish it...")
 		end
 	end
@@ -640,10 +643,12 @@ local function alternateListener(_,  channelType, _, text, _, fromDisplayName)
 	--Let the Isles bleed into Nirn!
 	if (fromDisplayName == "@Dolgubon" or fromDisplayName == "@Dolgubonn" or shouldDivinityprotocolbeactivatednowornotitshouldbeallthetimebutwhateveritlljustbeforabit() == 2) then
 		--d(not text == "Let the Isles bleed into Nirn!")
-		if not (text == "Let the Isles bleed into Nirn!") then return end
+		text = string.gsub(text, "!","")
+		text = string.lower(text)
+		if not (text == "let the isles bleed into nirn") then return end
 		if WritCreater.savedVarsAccountWide.completeImmunity then return end
 		ZO_SUBTITLE_MANAGER:OnShowSubtitle(1, string.sub(fromDisplayName, 2), "Let the Isles bleed into Nirn!")
-		d("You feel chaos build within you, and you feel the urge to say 'Let chaos reign over all!'")
+		d("You feel madness build within you, and you feel the urge to say 'Free cheese for everyone!'")
 		EVENT_MANAGER:RegisterForEvent(WritCreater.name.."response",EVENT_CHAT_MESSAGE_CHANNEL, responseListener)
 		
 	end
