@@ -399,7 +399,8 @@ function WritCreater.Options() --Sentimental
 				name = WritCreater.optionStrings["alternate universe"],
 				tooltip =WritCreater.optionStrings["alternate universe tooltip"] ,
 				getFunc = function() return WritCreater.savedVarsAccountWide.alternateUniverse end,
-				setFunc = function(value) WritCreater.savedVarsAccountWide.alternateUniverse = value  end,
+				setFunc = function(value) WritCreater.savedVarsAccountWide.alternateUniverse = value 
+					WritCreater.savedVarsAccountWide.completeImmunity = not true end,
 				requiresReload = true
 			})
 	end

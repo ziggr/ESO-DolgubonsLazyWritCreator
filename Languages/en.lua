@@ -614,17 +614,22 @@ local function responseListener(_,  channelType, _, text, _, fromDisplayName)
 		text = string.lower(text)
 		text = string.gsub(text, "riegn", "reign")
 		text = string.gsub(text, "!","")
-		if text == "let madness reign over all" then
-			d("You give yourself over completely to the madness! Maybe you should also ask the Isles to bleed into Nirn")
+		if text == "free cheese for everyone" then
+			d("You give yourself over to the madness! Maybe you should also ask the Isles to bleed into Nirn!")
 			enableAlternateUniverse(true)
 			WritCreater.WipeThatFrownOffYourFace(true)
 			EVENT_MANAGER:UnregisterForEvent(WritCreater.name.."response",EVENT_CHAT_MESSAGE_CHANNEL)
+			WritCreater.savedVarsAccountWide.alternateUniverse = true
+			WritCreater.savedVarsAccountWide.completeImmunity = false
 		elseif text == "let order reign over all" then
 			d("You fully reject the madness!")
 			WritCreater.savedVarsAccountWide.completeImmunity = true
+			WritCreater.savedVarsAccountWide.alternateUniverse = false
 			EVENT_MANAGER:UnregisterForEvent(WritCreater.name.."response",EVENT_CHAT_MESSAGE_CHANNEL)
 		elseif string.find(text, "cheese") then
 			d("The feeling inside you seems to lick its lips")
+		elseif string.find(text, "madness") then
+			d("The feeling nods as if to say 'That's correct'")
 		elseif string.find(text, "sheogorath") or string.find(text, "sheo") then
 			d("At the name of it's master, the madness tries to take over, but the ritual is not yet complete.")
 		elseif string.find(text, "jyggalag") or string.find(text, "jygalag") then
