@@ -19,7 +19,7 @@ local completionStrings
 local function HandleQuestCompleteDialog(eventCode, journalIndex)
 	local writs = WritCreater.writSearch()
 	if not GetJournalQuestIsComplete(journalIndex) then return end
-	local currentWritDialogue = 0
+	local currentWritDialogue 
 	for i = 1, 6 do
 		if writs[i] == journalIndex then -- determine which type of writ it is
 			
@@ -35,6 +35,7 @@ local function HandleQuestCompleteDialog(eventCode, journalIndex)
 		return 
 	end
 	EVENT_MANAGER:UnregisterForEvent(WritCreater.name, EVENT_QUEST_COMPLETE_DIALOG)
+	if not currentWritDialogue then return end
 	-- Increment the number of writs complete number
 	WritCreater.savedVarsAccountWide["rewards"][currentWritDialogue]["num"] = WritCreater.savedVarsAccountWide["rewards"][currentWritDialogue]["num"] + 1
 	WritCreater.savedVarsAccountWide["total"] = WritCreater.savedVarsAccountWide["total"] + 1
