@@ -65,7 +65,7 @@ local function styleCompiler()
 			tooltip = optionStrings["style tooltip"](v[2], v[3]),
 			getFunc = function() return WritCreater.savedVars.styles[v[1]] end,
 			setFunc = function(value)
-				WritCreater.savedVars.styles[v[1]] = value or nil
+				WritCreater.savedVars.styles[v[1]] = value  --- DO NOT CHANGE THIS! If you have 'or nil' then the ZO_SavedVars will set it to true.
 				end,
 		}
 		submenuTable[#submenuTable + 1] = option
@@ -75,12 +75,15 @@ end
 
 
 function WritCreater.Options() --Sentimental
+	setupReplacementOnce = false
 	local function WipeThatFrownOffYourFace(override)
-		if WritCreater.alternateUniverse and (override or WritCreater.savedVarsAccountWide.alternateUniverse ) then
-			if  WritCreater.savedVarsAccountWide.completeImmunity then return end
+		if WritCreater.alternateUniverse then
+			if setupReplacementOnce then return end
+			setupReplacementOnce = true
 			local stations, stationNames = WritCreater.alternateUniverse()
 			
 			local function setupReplacement(object, functionName, positionOfText, types)
+
 				local stationsToCheck = {}
 				if types then
 					stationsToCheck = stations
@@ -92,6 +95,7 @@ function WritCreater.Options() --Sentimental
 				local original = object[functionName]
 				object[functionName] = function(self, ...)
 				local parameters = {...}
+					if not WritCreater.savedVarsAccountWide.alternateUniverse then original(self, ...) return end
 					local text = parameters[positionOfText]
 					for i, stationOriginalName in pairs(stationsToCheck) do 
 						if string.find(text, stations[i]) then
@@ -104,7 +108,7 @@ function WritCreater.Options() --Sentimental
 					original(self, ...)
 				end
 			end
-			-- unstuck yourself prompts do use the string overwrite functions
+			-- unstuck yourself prompts do use the string overwrite functions. Should be safe
 			SafeAddString(SI_CUSTOMER_SERVICE_UNSTUCK_COST_PROMPT,string.gsub(GetString(SI_CUSTOMER_SERVICE_UNSTUCK_COST_PROMPT_TELVAR), stations[9], stationNames[9]), 2)
 			SafeAddString(SI_CUSTOMER_SERVICE_UNSTUCK_COST_PROMPT_TELVAR, string.gsub(GetString(SI_CUSTOMER_SERVICE_UNSTUCK_COST_PROMPT_TELVAR), stations[9], stationNames[9]), 2)
 
@@ -126,6 +130,11 @@ function WritCreater.Options() --Sentimental
 				end  
 			end)
 		end
+	end
+	if WritCreater.hasMadnessEngulfedNirn and WritCreater.hasMadnessEngulfedNirn() and not WritCreater.savedVarsAccountWide.completeImmunity 
+		and not WritCreater.savedVarsAccountWide.oneAlternateActivation then 
+		WritCreater.savedVarsAccountWide.alternateUniverse = true
+		WritCreater.savedVarsAccountWide.oneAlternateActivation = true
 	end
 	WipeThatFrownOffYourFace()
 	local g = getmetatable(WritCreater) or {}
@@ -399,9 +408,10 @@ function WritCreater.Options() --Sentimental
 				name = WritCreater.optionStrings["alternate universe"],
 				tooltip =WritCreater.optionStrings["alternate universe tooltip"] ,
 				getFunc = function() return WritCreater.savedVarsAccountWide.alternateUniverse end,
-				setFunc = function(value) WritCreater.savedVarsAccountWide.alternateUniverse = value 
-					WritCreater.savedVarsAccountWide.completeImmunity = not true end,
-				requiresReload = true
+				setFunc = function(value) 
+					WritCreater.savedVarsAccountWide.alternateUniverse = value 
+					WritCreater.savedVarsAccountWide.completeImmunity = not value end,
+				
 			})
 	end
 

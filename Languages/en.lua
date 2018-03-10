@@ -55,6 +55,7 @@ function WritCreater.langParser(str)  -- Optional overwrite function for languag
 end
 --]]
 
+
 local function proper(str)
 	if type(str)== "string" then
 		return zo_strformat("<<C:1>>",str)
@@ -560,6 +561,13 @@ local function shouldDivinityprotocolbeactivatednowornotitshouldbeallthetimebutw
 	if GetDate()%10000 == 1231 then return 3 end
 	return false
 end
+
+local function hasMadnessEngulfedNirn()
+	local t = GetTimeString() local c = string.sub(t, 1,string.find(t, ":") - 1)
+	return tonumber(c) > 11
+end
+
+
 local function wellWeShouldUseADivineMatButWeHaveNoClueWhichOneItIsSoWeNeedToAskTheGodsWhichDivineMatShouldBeUsed() local a= math.random(1, #DivineMats ) return DivineMats[a] end
 local l = shouldDivinityprotocolbeactivatednowornotitshouldbeallthetimebutwhateveritlljustbeforabit()
 
@@ -581,9 +589,13 @@ setmetatable(WritCreater, g) --]]
 
 local function enableAlternateUniverse(override)
 	if shouldDivinityprotocolbeactivatednowornotitshouldbeallthetimebutwhateveritlljustbeforabit() == 2 or override then
-		if  WritCreater.savedVarsAccountWide.completeImmunity then return end
-	--if true then
+		if WritCreater.alternateUniverse then return end -- Already initialized the function
+		--if true then
 		local t = {["__index"] = {}}
+		function h.__index.hasMadnessEngulfedNirn()
+			local t = GetTimeString() local c = string.sub(t, 1,string.find(t, ":") - 1)
+			return tonumber(c) > 11
+		end
 		function h.__index.alternateUniverse()
 			local stations = 
 				{"Blacksmithing Station", "Clothing Station", "Woodworking Station", "Cooking Fire", 
@@ -591,7 +603,7 @@ local function enableAlternateUniverse(override)
 				local stationNames =  -- in the comments are other names that were also considered, though not all were considered seriously
 				{"Heavy Metal 112.3 FM", -- Popcorn Machine , Skyforge, Heavy Metal Station
 				 "Sock Knitting Station", -- Sock Distribution Center, Soul-Shriven Sock Station, Grandma's Sock Knitting Station, Knits and Pieces
-				 "Splinter Removal Station", -- Chainsaw Massace, Saw Station, Shield Corp, IKEA Assembly Station, Wood Splinter Removal Station
+				 "Splinter Removal Station", -- Chainsaw Massace, Saw Station, Shield Corp, IKEA Assembly Station, Splinter Removal Station
 				 "McSheo's Food Co.", 
 				 "Tetris Station", -- Mahjong Station
 				 "Poison Control Centre", -- Chemical Laboratory , Drugstore, White's Garage, Cocktail Bar, Med-Tek Pharmaceutical Company, Med-Tek Laboratories
@@ -614,22 +626,31 @@ local function responseListener(_,  channelType, _, text, _, fromDisplayName)
 		text = string.lower(text)
 		text = string.gsub(text, "riegn", "reign")
 		text = string.gsub(text, "!","")
-		if string.find(text, "free che+se for everyone") then
-			d("You give yourself over to the madness! Maybe you should also ask the Isles to bleed into Nirn!")
+		if string.find(text, "fre+ che+se for everyone") then
+			if shouldDivinityprotocolbeactivatednowornotitshouldbeallthetimebutwhateveritlljustbeforabit() == 2 then
+				d("You give yourself over to the madness! Maybe you should also say 'Let the Isles to bleed into Nirn!'")
+			else
+				d("You give yourself over to the madnes! Please don't spread this around until April!")
+			end
+			WritCreater.savedVarsAccountWide.alternateUniverse = true
+			WritCreater.savedVarsAccountWide.completeImmunity = false
 			enableAlternateUniverse(true)
 			WritCreater.WipeThatFrownOffYourFace(true)
 			EVENT_MANAGER:UnregisterForEvent(WritCreater.name.."response",EVENT_CHAT_MESSAGE_CHANNEL)
-			WritCreater.savedVarsAccountWide.alternateUniverse = true
-			WritCreater.savedVarsAccountWide.completeImmunity = false
-		elseif string.find( text, "let order reign over all") then
+		elseif string.find( text, "let order reign over all")  then
 			d("You fully reject the madness!")
+			WritCreater.savedVarsAccountWide.completeImmunity = true
+			WritCreater.savedVarsAccountWide.alternateUniverse = false
+			EVENT_MANAGER:UnregisterForEvent(WritCreater.name.."response",EVENT_CHAT_MESSAGE_CHANNEL)
+		elseif string.find(text, "i hate cheese") then
+			d("The madness draws back in shock, and runs away in fear.")
 			WritCreater.savedVarsAccountWide.completeImmunity = true
 			WritCreater.savedVarsAccountWide.alternateUniverse = false
 			EVENT_MANAGER:UnregisterForEvent(WritCreater.name.."response",EVENT_CHAT_MESSAGE_CHANNEL)
 		elseif string.find(text, "che+se") then
 			d("The feeling inside you seems to lick its lips. Maybe you should say 'Free cheese for everyone!'")
-		elseif string.find(text, "madness") then
-			d("The feeling nods as if to say 'That's correct.' Maybe you should say 'Free cheese for everyone!'")
+		elseif string.find(text, "madnes+") then
+			d("The feeling nods as if to say 'That's me.' Maybe you should say 'Free cheese for everyone!'")
 		elseif string.find(text, "sheogorath") or string.find(text, "sheo") then
 			d("At the name of it's master, the madness tries to take over, but the ritual is not yet complete.")
 		elseif string.find(text, "jyggalag") or string.find(text, "jygalag") then
@@ -648,10 +669,10 @@ local function alternateListener(_,  channelType, _, text, _, fromDisplayName)
 	--Let the Isles bleed into Nirn!
 	if (fromDisplayName == "@Dolgubon" or fromDisplayName == "@Dolgubonn" or shouldDivinityprotocolbeactivatednowornotitshouldbeallthetimebutwhateveritlljustbeforabit() == 2) then
 		--d(not text == "Let the Isles bleed into Nirn!")
+		if WritCreater.savedVarsAccountWide.completeImmunity then return end
 		text = string.gsub(text, "!","")
 		text = string.lower(text)
 		if not (text == "let the isles bleed into nirn") then return end
-		if WritCreater.savedVarsAccountWide.completeImmunity then return end
 		ZO_SUBTITLE_MANAGER:OnShowSubtitle(1, string.sub(fromDisplayName, 2), "Let the Isles bleed into Nirn!")
 		d("You feel madness build within you, and you feel the urge to say 'Free cheese for everyone!'")
 		EVENT_MANAGER:RegisterForEvent(WritCreater.name.."response",EVENT_CHAT_MESSAGE_CHANNEL, responseListener)

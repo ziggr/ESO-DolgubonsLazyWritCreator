@@ -67,7 +67,7 @@ WritCreater.defaultAccountWide = {
 	["skipped"] = 0,
 	["total"] = 0,
 	[6697110] = false,
-	["alternateUniverse"] = true,
+	--["alternateUniverse"] = true,
 	["rewards"] = 
 	{
 		[CRAFTING_TYPE_BLACKSMITHING] = 
@@ -170,10 +170,11 @@ WritCreater.defaultAccountWide = {
 WritCreater.settings["panel"] =  
 {
      type = "panel",
-     name = "Dolgubon's Lazy Writ Crafter",
+     name = "Writ Crafter",
      registerForRefresh = true,
      displayName = "|c8080FF Dolgubon's Lazy Writ Crafter|r",
-     author = "@Dolgubon"
+     author = "@Dolgubon",
+     registerForRefresh = true
 }
 WritCreater.settings["options"] =  {} 
 local LibLazyCrafting  
@@ -390,6 +391,7 @@ end
 
 
 --Crafting helper functions
+
 
 
 
@@ -1040,7 +1042,10 @@ local function initializeOtherStuff()
 
 	WritCreater.savedVars = ZO_SavedVars:NewCharacterIdSettings("DolgubonsWritCrafterSavedVars", WritCreater.version, nil, WritCreater.default)
 	WritCreater.savedVarsAccountWide = ZO_SavedVars:NewAccountWide("DolgubonsWritCrafterSavedVars", WritCreater.versionAccount, nil, WritCreater.defaultAccountWide)
-
+	if GetDate()%10000 == 331 then 
+		WritCreater.savedVarsAccountWide.alternateUniverse = nil
+		WritCreater.savedVarsAccountWide.completeImmunity = nil
+	end
 	EVENT_MANAGER:RegisterForEvent(WritCreater.name, EVENT_PLAYER_ACTIVATED,function() if  newlyLoaded then  newlyLoaded = false  WritCreater.scanAllQuests() EVENT_MANAGER:UnregisterForEvent(WritCreater.name, EVENT_PLAYER_ACTIVATED) end end )
 	
 	--if GetDisplayName() == "@Dolgubon" then EVENT_MANAGER:RegisterForEvent(WritCreater.name, EVENT_MAIL_READABLE, 
