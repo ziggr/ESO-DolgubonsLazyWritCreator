@@ -5,7 +5,7 @@
 
 local LIBSTUB_MAJOR, LIBSTUB_MINOR = "LibStub", 4
 local LibStub = _G[LIBSTUB_MAJOR]
-
+WasLibbyStubLoaded = true
 local strformat = string.format
 if not LibStub or LibStub.minor < LIBSTUB_MINOR then
 	LibStub = LibStub or {libs = {}, minors = {} }
