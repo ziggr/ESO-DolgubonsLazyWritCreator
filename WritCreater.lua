@@ -48,7 +48,7 @@ WritCreater.default =
 	["shouldGrab"] = true,
 	["OffsetX"] = 1150,
 	["OffsetY"] = 0,
-	["styles"] = {true,true,true,true,true,true,true,true,true,true,},
+	["styles"] = {true,true,true,true,true,true,true,true,true,true,[34] = true},
 	["debug"] = false,
 	["autoLoot"] = true,
 	["exitWhenDone"] = true,
