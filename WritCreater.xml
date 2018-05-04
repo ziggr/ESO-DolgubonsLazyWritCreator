@@ -60,7 +60,7 @@
           <Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="-5" offsetY="-5" />
           <Dimensions x="130" />
           <OnClicked>
-             RequestOpenUnsafeURL("https://www.paypal.me/Dolgubon")
+             RequestOpenUnsafeURL("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=7CZ3LW6E66NAU")
           </OnClicked>
         </Button>
       </Controls>

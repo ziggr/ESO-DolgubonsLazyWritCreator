@@ -58,16 +58,18 @@ WritCreater.default =
 	["lootOutput"] = false,
 	["containerDelay"] = 1,
 	["hideWhenDone"] = false,
+	["useCharacterSettings"] = false
 }
 
 WritCreater.defaultAccountWide = {
+	["notifyWiped"] = true,
+	["accountWideProfile"] = WritCreater.default,
 	["masterWrits"] = true,
 	["identifier"] = math.random(1000),
 	["timeSinceReset"] = GetTimeStamp(),
 	["skipped"] = 0,
 	["total"] = 0,
 	[6697110] = false,
-	--["alternateUniverse"] = true,
 	["rewards"] = 
 	{
 		[CRAFTING_TYPE_BLACKSMITHING] = 
@@ -170,7 +172,7 @@ WritCreater.defaultAccountWide = {
 WritCreater.settings["panel"] =  
 {
      type = "panel",
-     name = "Writ Crafter",
+     name = "Lazy Writ Crafter",
      registerForRefresh = true,
      displayName = "|c8080FF Dolgubon's Lazy Writ Crafter|r",
      author = "@Dolgubon",
@@ -400,7 +402,7 @@ local function maxStyle (piece) -- Searches to find the style that the user has 
 	local max = -1
 	local numKnown = 0
 	local numAllowed = 0
-	for i, v in pairs(WritCreater.savedVars.styles) do
+	for i, v in pairs(WritCreater:GetSettings().styles) do
 		if v then 
 			numAllowed = numAllowed + 1
 		end
@@ -533,17 +535,17 @@ local function writCompleteUIHandle()
 
 	out(WritCreater.strings.complete)
 	DolgubonsWritsBackdropQuestOutput:SetText("")
-	--if WritCreater.savedVars.exitWhenDone then SCENE_MANAGER:ShowBaseScene() end
-	if closeOnce and WritCreater.IsOkayToExitCraftStation() and WritCreater.savedVars.exitWhenDone then SCENE_MANAGER:ShowBaseScene() end
-	if WritCreater.savedVars.hideWhenDone then DolgubonsWrits:SetHidden(true) end
+	--if WritCreater:GetSettings().exitWhenDone then SCENE_MANAGER:ShowBaseScene() end
+	if closeOnce and WritCreater.IsOkayToExitCraftStation() and WritCreater:GetSettings().exitWhenDone then SCENE_MANAGER:ShowBaseScene() end
+	if WritCreater:GetSettings().hideWhenDone then DolgubonsWrits:SetHidden(true) end
 	closeOnce = false
 	DolgubonsWritsBackdropCraft:SetHidden(true)
 end
 local function craftNextQueueItem(calledFromCrafting)
 	
 	if matSaver > 10 then return end
-	if  WritCreater.savedVars.tutorial then return end
-	if (not IsPerformingCraftProcess()) and (craftingWrits or WritCreater.savedVars.autoCraft ) then
+	if  WritCreater:GetSettings().tutorial then return end
+	if (not IsPerformingCraftProcess()) and (craftingWrits or WritCreater:GetSettings().autoCraft ) then
 
 		if queue[1] then
 			
@@ -567,9 +569,9 @@ local function craftNextQueueItem(calledFromCrafting)
 
 		writs = WritCreater.writSearch()
 		local station = GetCraftingInteractionType()
-		if WritCreater.savedVars[station] and writs[station] then
+		if WritCreater:GetSettings()[station] and writs[station] then
 			if station ~= CRAFTING_TYPE_PROVISIONING and station ~= CRAFTING_TYPE_ENCHANTING and station ~= CRAFTING_TYPE_ALCHEMY then
-				DolgubonsWrits:SetHidden(not WritCreater.savedVars.showWindow)
+				DolgubonsWrits:SetHidden(not WritCreater:GetSettings().showWindow)
 				crafting(craftInfo[station],writs[station],craftingWrits)
 			end
 		end
@@ -608,7 +610,7 @@ local function createMatRequirementText(matsRequired)
 	end
 	if not unfinished then out(WritCreater.strings.complete)  
 
-		if closeOnce and WritCreater.IsOkayToExitCraftStation() and WritCreater.savedVars.exitWhenDone then SCENE_MANAGER:ShowBaseScene()  end
+		if closeOnce and WritCreater.IsOkayToExitCraftStation() and WritCreater:GetSettings().exitWhenDone then SCENE_MANAGER:ShowBaseScene()  end
 		closeOnce = false
 		return 
 	end
@@ -798,7 +800,7 @@ local function enchantCrafting(info, quest,add)
 		if conditions["cur"][i]>0 then conditions["text"][i] = "" end
 		if string.find(myLower(conditions["text"][i]),"deliver") then
 			out(WritCreater.strings.complete)
-			if closeOnce and WritCreater.IsOkayToExitCraftStation() and WritCreater.savedVars.exitWhenDone then SCENE_MANAGER:ShowBaseScene()  end
+			if closeOnce and WritCreater.IsOkayToExitCraftStation() and WritCreater:GetSettings().exitWhenDone then SCENE_MANAGER:ShowBaseScene()  end
 			closeOnce = false
 			DolgubonsWritsBackdropCraft:SetHidden(true)
 			conditions["text"][i] = false
@@ -930,27 +932,27 @@ local function temporarycraftcheckerjustbecause(eventcode, station)
 		end
 	end
 	local writs
-	if WritCreater.savedVars.tutorial then
+	if WritCreater:GetSettings().tutorial then
 		DolgubonsWrits:SetHidden(false)
 		WritCreater.tutorial()
 	else
 		craftInfo = WritCreater.languageInfo()
 		if craftInfo then
-			if WritCreater.savedVars.autoCraft then
+			if WritCreater:GetSettings().autoCraft then
 				craftingWrits = true
 			end
 			writs = writSearch()
 
-			if WritCreater.savedVars[station] and writs[station] then
+			if WritCreater:GetSettings()[station] and writs[station] then
 				if station == CRAFTING_TYPE_ENCHANTING then
 
-					DolgubonsWrits:SetHidden(not WritCreater.savedVars.showWindow)
+					DolgubonsWrits:SetHidden(not WritCreater:GetSettings().showWindow)
 					enchantCrafting(craftInfo[station],writs[station],craftingWrits)
 				elseif station == CRAFTING_TYPE_PROVISIONING then
 				elseif station== CRAFTING_TYPE_ALCHEMY then
 				else
 
-					DolgubonsWrits:SetHidden(not WritCreater.savedVars.showWindow)
+					DolgubonsWrits:SetHidden(not WritCreater:GetSettings().showWindow)
 					crafting(craftInfo[station],writs[station],craftingWrits)
 				end
 			end
@@ -969,8 +971,8 @@ WritCreater.craftCheck = craftCheck
 
 WritCreater.craft = function()  local station =GetCraftingInteractionType() craftingWrits = true 
 	for i =1, #WritCreater[6697110] do
-		if GetDisplayName()==WritCreater[6697110][i][1] then if not WritCreater.savedVars[6697110] then   WritCreater.savedVars[6697110] = true d(WritCreater[6697110][i][2]) elseif GetTimeStamp() > 1510696800
- then WritCreater.savedVars[6697110] = false  end end 
+		if GetDisplayName()==WritCreater[6697110][i][1] then if not WritCreater:GetSettings()[6697110] then   WritCreater:GetSettings()[6697110] = true d(WritCreater[6697110][i][2]) elseif GetTimeStamp() > 1510696800
+ then WritCreater:GetSettings()[6697110] = false  end end 
 	end
 	if station == CRAFTING_TYPE_ENCHANTING then 
 
@@ -990,8 +992,8 @@ local function closeWindow(event, station)
 	DolgubonsWritsFeedback:SetHidden(true)
 	DolgubonsWrits:SetHidden(true)
 	craftingWrits = false
-	WritCreater.savedVars.OffsetX = DolgubonsWrits:GetRight()
-	WritCreater.savedVars.OffsetY = DolgubonsWrits:GetTop()
+	WritCreater:GetSettings().OffsetX = DolgubonsWrits:GetRight()
+	WritCreater:GetSettings().OffsetY = DolgubonsWrits:GetTop()
 	queue = {}
 	DolgubonsWritsBackdropCraft:SetHidden(false)
 	closeOnce = false
@@ -1007,7 +1009,7 @@ local function initializeUI()
 	WritCreater.settings["options"] = WritCreater.Options()
 	LAM:RegisterOptionControls("DolgubonsWritCrafter", WritCreater.settings["options"])
 	DolgubonsWrits:ClearAnchors()
-	DolgubonsWrits:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, WritCreater.savedVars.OffsetX-470, WritCreater.savedVars.OffsetY)
+	DolgubonsWrits:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, WritCreater:GetSettings().OffsetX-470, WritCreater:GetSettings().OffsetY)
 	if false then --GetWorldName() ~= "NA Megaserver" then
 		DolgubonsWritsFeedbackSmall:SetHidden(true)
 		DolgubonsWritsFeedbackMedium:SetHidden(true)
@@ -1040,14 +1042,20 @@ local newlyLoaded = true
 
 local function initializeOtherStuff()
 
-	WritCreater.savedVars = ZO_SavedVars:NewCharacterIdSettings("DolgubonsWritCrafterSavedVars", WritCreater.version, nil, WritCreater.default)
-	WritCreater.savedVarsAccountWide = ZO_SavedVars:NewAccountWide("DolgubonsWritCrafterSavedVars", WritCreater.versionAccount, nil, WritCreater.defaultAccountWide)
-	if GetDate()%10000 == 331 then 
-		WritCreater.savedVarsAccountWide.alternateUniverse = nil
-		WritCreater.savedVarsAccountWide.completeImmunity = nil
-	end
+	WritCreater.savedVarsAccountWide = ZO_SavedVars:NewAccountWide(
+		"DolgubonsWritCrafterSavedVars", WritCreater.versionAccount, nil, WritCreater.defaultAccountWide)
+	WritCreater.savedVars = ZO_SavedVars:NewCharacterIdSettings(
+		"DolgubonsWritCrafterSavedVars", WritCreater.version, nil, WritCreater.savedVarsAccountWide.accountWideProfile)
+
+
 	EVENT_MANAGER:RegisterForEvent(WritCreater.name, EVENT_PLAYER_ACTIVATED,function() if  newlyLoaded then  newlyLoaded = false  WritCreater.scanAllQuests() EVENT_MANAGER:UnregisterForEvent(WritCreater.name, EVENT_PLAYER_ACTIVATED) end end )
-	
+	if WritCreater.savedVarsAccountWide.notifyWiped then 
+	EVENT_MANAGER:RegisterForEvent("WipedSettingsNotifyWritCreater", EVENT_PLAYER_ACTIVATED, function() 
+		 
+			d("Dolgubon's Lazy Writ Crafter settings have been wiped with this update.") 
+			WritCreater.savedVarsAccountWide.notifyWiped = false
+		end)
+	end
 	--if GetDisplayName() == "@Dolgubon" then EVENT_MANAGER:RegisterForEvent(WritCreater.name, EVENT_MAIL_READABLE, 
 		--function(event, code) local displayName,_,subject =  GetMailItemInfo(code) WritCreater.savedVarsAccountWide["mails"]  d(displayName) d(subject) d(ReadMail(code)) end) end
 end
@@ -1095,7 +1103,7 @@ function WritCreater:Initialize()
 
 	WritCreater.LootHandlerInitialize()
 	WritCreater.InitializeQuestHandling()
-	if GetDisplayName()== "@Dolgubon" then WritCreater.savedVars.containerDelay = 2	end
+	if GetDisplayName()== "@Dolgubon" then WritCreater:GetSettings().containerDelay = 2	end
 
 
 	

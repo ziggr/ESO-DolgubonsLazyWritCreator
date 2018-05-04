@@ -584,6 +584,13 @@ end
 
 --Options table Strings
 WritCreater.optionStrings = WritCreater.optionStrings or {}
+WritCreater.optionStrings.nowEditing                   = "You are changing %s settings"
+WritCreater.optionStrings.accountWide                  = "Account Wide"
+WritCreater.optionStrings.characterSpecific            = "Character Specific"
+WritCreater.optionStrings.useCharacterSettings         = "Use character settings" 
+WritCreater.optionStrings.useCharacterSettingsTooltip  = "Use character specific settings on this character only"
+
+
 WritCreater.optionStrings["style tooltip"]								= function (styleName, styleStone) return zo_strformat("Allow the <<1>> style, which uses the <<2>> style stone, to be used for crafting",styleName, styleStone) end 
 WritCreater.optionStrings["show craft window"]							= "Show Craft Window"
 WritCreater.optionStrings["show craft window tooltip"]					= "Shows the crafting window when a crafting station is open"
@@ -636,8 +643,7 @@ WritCreater.optionStrings["container delay"]							= "Delay Container Looting"
 WritCreater.optionStrings["container delay tooltip"]					= "Delay the autolooting of writ reward containers when you receive them"
 WritCreater.optionStrings["hide when done"]								= "Hide when done"
 WritCreater.optionStrings["hide when done tooltip"]						= "Hide the addon windonw when all items have been crafted"
-WritCreater.optionStrings["alternate universe"]							= "Alternate Universe"
-WritCreater.optionStrings["alternate universe tooltip"] 				= "Disable the Alternate Universe April Fools joke."
+
 --Hide craft window when done
 --"Verstecke Fenster anschließend",
 -- [tooltip ] = "Verstecke das Writ Crafter Fenster an der Handwerksstation automatisch, nachdem die Gegenstände hergestellt wurden"
