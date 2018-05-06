@@ -558,6 +558,12 @@ end
 
 
 WritCreater.optionStrings = WritCreater.optionStrings or {}
+
+
+WritCreater.optionStrings.nowEditing                   = "Du änderst %s Einstellungen"
+WritCreater.optionStrings.accountWide                  = "Gesamtes Konto"
+WritCreater.optionStrings.characterSpecific            = "Charakter spezifisch"
+
 WritCreater.optionStrings["style tooltip"]                            = function (styleName, styleStone) return zo_strformat("Allow the <<1>> style, which uses <<2>> to be used for crafting",styleName) end  
 WritCreater.optionStrings["show craft window"]                        = "Zeige Writ Crafter Fenster"
 WritCreater.optionStrings["show craft window tooltip"]                = "Zeige das Writ Crafter Fenster während du an einer Handwerksstation bist"
@@ -606,6 +612,8 @@ WritCreater.optionStrings["container delay"]							= "Delay Container Looting"
 WritCreater.optionStrings["container delay tooltip"]					= "Delay the autolooting of writ reward containers when you receive them"
 WritCreater.optionStrings["hide when done"]								= "Verstecke Fenster anschließend"
 WritCreater.optionStrings["hide when done tooltip"]						= "Verstecke das Writ Crafter Fenster an der Handwerksstation automatisch, nachdem die Gegenstände hergestellt wurden"
+
+
 
 
 --"<<1>> erhalten"

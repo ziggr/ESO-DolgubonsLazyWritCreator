@@ -267,7 +267,7 @@ local function prepareToInteract()
 	local _, interact = GetGameCameraInteractableActionInfo()
 	if interact then
 		local names =WritCreater.langWritNames()
-		for i = 1, 7 do
+		for i = 1, #WritCreater.langWritNames() do
 			if string.find(interact, names[i]) then
 				return true
 			end

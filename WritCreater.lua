@@ -919,7 +919,7 @@ local function writSearch()
 		local Qname=GetJournalQuestName(i)
 		Qname=WritCreater.questExceptions(Qname)
 		if (GetJournalQuestType(i) == QUEST_TYPE_CRAFTING or string.find(Qname, WritCreater.writNames["G"])) and GetJournalQuestRepeatType(i)==QUEST_REPEAT_DAILY then
-			for j = 1, 7 do 
+			for j = 1, #WritCreater.writNames do 
 				if string.find(myLower(Qname),myLower(WritCreater.writNames[j])) then
 					W[j] = i
 				end
